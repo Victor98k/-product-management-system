@@ -6,5 +6,3 @@ const { db } = mongoose.connection;
 
 const productCol = await db.collection("products");
 
-
-Daniel sjunger som en gud 
