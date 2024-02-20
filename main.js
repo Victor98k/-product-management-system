@@ -79,40 +79,25 @@ const main = async () => {
 
       case "2":
         console.clear();
-
-        console.log("Add new movie");
-        console.log("Press 8 to go back to the main menu");
-        async function addMovie() {
-          let title = p("Enter new title: ");
-          let director = p("Enter a director: ");
-          let releaseYear = p(
-            "Enter releaseYear: (Enter the year in numbers) "
-          );
-          let genres = p("Enter genres: ");
-          let ratings = p("Enter ratings:  ");
-          let cast = p("Enter cast: ");
-          let newMovie = {
-            title,
-            director,
-            releaseYear,
-            genres,
-            ratings,
-            cast,
+          console.log("Add new product");
+          async function addNewProduct() {
+            let Namee = p("Enter name of product");
+            let Category = p("Enter Category");
+            let Price = p("Enter Price");
+            let Cost = p("Enter Cost");
+            let Stock = p("Enter Stock");
           };
-          await movieModel.create(newMovie);
-          console.log(" You have added a new movie: ");
-          console.log(newMovie);
-        }
-        await addMovie();
-        console.log("----------Menu----------");
-        console.log("1. Show all movies.");
-        console.log("2. Add new movie");
-        console.log(
-          "3. Update a movie (Update title, director or release date)"
-        );
-        console.log("4. Delete a movie.");
-        console.log("5. Exit");
-        console.log("-------------------------");
+          let newProduct = {
+            Namee,
+            Category,
+            Price,
+            Cost,
+            Stock
+          };
+          await productModel.create(newProduct);
+          console.log("You have added a new product");
+          console.log(newProduct);
+
         break;
 
       case "3":
