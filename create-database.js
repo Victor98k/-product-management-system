@@ -24,7 +24,7 @@ const createDatabase = async () => {
     });
 
     const productSchema = mongoose.Schema({
-      Namee: String,
+      Name: String,
       Category: String,
       Price: Number,
       Cost: Number,
@@ -51,42 +51,42 @@ const createDatabase = async () => {
 
     let insertProducts = await productCol.insertMany([
       {
-        Namee: "Laptop",
+        Name: "Laptop",
         Category: "Electronics",
         Price: 1000,
         Cost: 800,
         Stock: 50,
       },
       {
-        Namee: "Smartphone",
+        Name: "Smartphone",
         Category: "Electronics",
         Price: 800,
         Cost: 600,
         Stock: 40,
       },
       {
-        Namee: "T-shirt",
+        Name: "T-shirt",
         Category: "Clothing",
         Price: 20,
         Cost: 10,
         Stock: 100,
       },
       {
-        Namee: "Refrigerator",
+        Name: "Refrigerator",
         Category: "Home Appliances",
         Price: 1200,
         Cost: 1000,
         Stock: 30,
       },
       {
-        Namee: "Shampoo",
+        Name: "Shampoo",
         Category: "Beauty & Personal Care",
         Price: 10,
         Cost: 5,
         Stock: 80,
       },
       {
-        Namee: "Soccer Ball",
+        Name: "Soccer Ball",
         Category: "Sports & Outdoors",
         Price: 30,
         Cost: 20,

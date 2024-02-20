@@ -21,6 +21,7 @@ const main = async () => {
     });
 
     const catergoryModel = mongoose.model("Categorys", categorySchema);
+    const productModel = mongoose.model("Products", productSchema);
 
     const p = prompt();
 
@@ -59,21 +60,8 @@ const main = async () => {
     switch (prompt) {
       case "1":
         console.clear();
-        // Our method to find and display all of our movies from the database.
-        let movies = await movieModel.find({});
-        console.clear();
-
-        console.log(movies);
-        console.log("Above is the list of all current movies in the database.");
-        console.log("----------Menu----------");
-        console.log("1. Show all movies.");
-        console.log("2. Add new movie");
-        console.log(
-          "3. Update a movie (Update title, director or release date)"
-        );
-        console.log("4. Delete a movie.");
-        console.log("5. Exit");
-        console.log("-------------------------");
+        console.log("You have choosen to add a new product");
+        await addCategory();
 
         break;
 
@@ -387,4 +375,23 @@ async function updateMovie() {
   } else {
     console.log("Movie not found. Please try again.");
   }
+}
+
+const categorySchema = mongoose.Schema({
+  categoryName: String,
+  catergoryType: String,
+});
+
+// add category function
+async function addCategory() {
+  let name = p("Enter category name: ");
+  let catergoryType = p("Enter category type: ");
+
+  let newCategory = {
+    name,
+    catergoryType,
+  };
+  await catergoryCol.create(newCategory);
+  console.log(" You have added a new category: ");
+  console.log(newCategory);
 }
