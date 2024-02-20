@@ -52,6 +52,8 @@ const main = async () => {
 
   let runApp = true;
 
+  const p = prompt();
+
   while (runApp) {
     let prompt = p("Make a choice by entering number: ");
     switch (prompt) {
