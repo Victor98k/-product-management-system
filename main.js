@@ -60,7 +60,7 @@ const main = async () => {
     switch (prompt) {
       case "1":
         console.clear();
-        console.log("You have choosen to add a new product");
+        console.log("You have choosen to add a new category");
         await addCategory();
 
         break;
