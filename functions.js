@@ -2,16 +2,15 @@ import prompt from "prompt-sync";
 
 export async function addNewCategory() {
   // Function to add new category
-  const p = prompt();
-  let name = p("Enter category name: ");
-  let catergoryType = p("Enter category type: ");
+  let name = prompt("Enter category name: ");
+  let categoryType = prompt("Enter category type: ");
 
   let newCategory = {
     name,
-    catergoryType,
+    categoryType,
   };
-  await catergoryCol.create(newCategory);
-  console.log(" You have added a new category: ");
+  await categoryCol.create(newCategory);
+  console.log("You have added a new category: ");
   console.log(newCategory);
 }
 
