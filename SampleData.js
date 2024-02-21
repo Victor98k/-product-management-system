@@ -1502,3 +1502,11 @@ export const sampleOffers = [
     category: ["Home Appliances", "Electronics", "Sports & Outdoors"],
   },
 ];
+
+export const sampleCategories = [
+  { name: "Electronics", description: "" },
+  { name: "Clothing", description: "" },
+  { name: "Home Appliances", description: "" },
+  { name: "Beauty & Personal Care", description: "" },
+  { name: "Sports & Outdoors", description: "" },
+];

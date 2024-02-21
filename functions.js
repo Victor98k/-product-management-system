@@ -1,4 +1,14 @@
-import prompt from "prompt-sync";
+import PromptSync from "prompt-sync";
+import mongoose from "mongoose";
+import {
+  OrdersModel,
+  ProductsModel,
+  OffersModel,
+  SuppliersModel,
+  CategoriesModel,
+} from "./models.js";
+
+const p = PromptSync();
 
 export async function addNewCategory() {
   // Function to add new category
@@ -38,7 +48,26 @@ export async function addNewProduct() {
 }
 
 export async function viewProductsByCategory() {
-  // Function to view products by category
+  const categoryName = p("Enter the category: "); // Get category input from the user
+
+  // First, find the category in the database to ensure it exists
+  const category = await CategoriesModel.findOne({ name: categoryName });
+
+  if (category) {
+    // If the category exists, find products in that category
+    const productsInCategory = await ProductsModel.find({
+      category: categoryName,
+    });
+
+    if (productsInCategory.length > 0) {
+      console.log(`Products in category ${categoryName}:`);
+      productsInCategory.forEach((product) => console.log(`- ${product.name}`));
+    } else {
+      console.log(`No products found in category ${categoryName}.`);
+    }
+  } else {
+    console.log(`Category ${categoryName} does not exist.`);
+  }
 }
 
 export async function viewProductsBySupplier() {

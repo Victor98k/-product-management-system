@@ -1,12 +1,13 @@
 import mongoose, { connect } from "mongoose";
 import PromptSync from "prompt-sync";
-import { addNewCategory } from "./functions.js";
+import { addNewCategory, viewProductsByCategory } from "./functions.js";
 const p = PromptSync();
 import {
   SuppliersModel,
   OffersModel,
   OrdersModel,
   ProductsModel,
+  CategoriesModel,
 } from "./models.js";
 import {
   sampleOffers,
@@ -19,6 +20,7 @@ let supplierCol = SuppliersModel.collection;
 let offerCol = OffersModel.collection;
 let salesOrderCol = OrdersModel.collection;
 let productCol = ProductsModel.collection;
+let categoriesCol = CategoriesModel.collection;
 
 const connectToDatabase = async () => {
   try {
@@ -28,6 +30,7 @@ const connectToDatabase = async () => {
     console.log("ERROR 404 - Could not connect to MongoDB", error);
   }
 };
+connectToDatabase();
 
 const main = async () => {
   let runApp = true;
