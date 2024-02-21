@@ -1,4 +1,14 @@
-import prompt from "prompt-sync";
+import PromptSync from "prompt-sync";
+import mongoose from "mongoose";
+import {
+  OrdersModel,
+  ProductsModel,
+  OffersModel,
+  SuppliersModel,
+  CategoriesModel,
+} from "./models.js";
+
+const p = PromptSync();
 
 export async function addNewCategory() {
   // Function to add new category
@@ -38,7 +48,26 @@ export async function addNewProduct() {
 }
 
 export async function viewProductsByCategory() {
-  // Function to view products by category
+  const categoryName = p("Enter the category: "); 
+
+  const category = await CategoriesModel.findOne({
+    name: { $regex: new RegExp(categoryName, "i") },
+  });
+
+  if (category) {
+    const productsInCategory = await ProductsModel.find({
+      category: { $regex: new RegExp(categoryName, "i") },
+    });
+
+    if (productsInCategory.length > 0) {
+      console.log(`Products in category ${categoryName}:`);
+      productsInCategory.forEach((product) => console.log(`- ${product.name}`));
+    } else {
+      console.log(`No products found in category ${categoryName}.`);
+    }
+  } else {
+    console.log(`Category ${categoryName} does not exist.`);
+  }
 }
 
 export async function viewProductsBySupplier() {
@@ -50,7 +79,24 @@ export async function viewAllOffersInPriceRange() {
 }
 
 export async function offersFromCategory() {
-  // Function to view all offers that contain a product from a specific category
+  const categoryName = p("Enter the category: "); 
+  
+  const offersInCategory = await OffersModel.find({
+    category: { $regex: new RegExp(categoryName, "i") },
+  });
+
+  if (offersInCategory.length > 0) {
+    console.log(`Offers in category ${categoryName}:`);
+    offersInCategory.forEach((offer) => {
+      console.log(
+        `- Offer ID: ${offer._id}, Products: ${offer.products.join(
+          ", "
+        )}, Price: ${offer.price}, Active: ${offer.active}`
+      );
+    });
+  } else {
+    console.log(`No offers found in category ${categoryName}.`);
+  }
 }
 
 export async function viewOffersBasedOnStock() {
