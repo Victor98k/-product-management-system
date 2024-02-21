@@ -1,31 +1,38 @@
 import mongoose, { connect } from "mongoose";
-import prompt from "prompt-sync";
-import { addNewCategory, addNewProduct } from "./functions.js";
+import PromptSync from "prompt-sync";
+import { addNewCategory } from "./functions.js";
+const p = PromptSync();
+import {
+  SuppliersModel,
+  OffersModel,
+  OrdersModel,
+  ProductsModel,
+} from "./models.js";
+import {
+  sampleOffers,
+  sampleOrders,
+  sampleSuppliers,
+  sampleProducts,
+} from "./SampleData.js";
 
-const p = prompt();
+let supplierCol = SuppliersModel.collection;
+let offerCol = OffersModel.collection;
+let salesOrderCol = OrdersModel.collection;
+let productCol = ProductsModel.collection;
 
-const main = async () => {
+const connectToDatabase = async () => {
   try {
     await connect("mongodb://127.0.0.1:27017/product-management-system");
+    console.log("You are now connected to MongoDB");
+  } catch (error) {
+    console.log("ERROR 404 - Could not connect to MongoDB", error);
+  }
+};
 
-    const { db } = mongoose.connection;
+const main = async () => {
+  let runApp = true;
 
-    const productCol = await db.collection("");
-    const catergoryCol = await db.collection("");
-
-    const categorySchema = mongoose.Schema({
-      categoryName: String,
-      catergoryType: String,
-    });
-
-    const productSchema = mongoose.Schema({
-      categoryName: String,
-      catergoryType: String,
-    });
-
-    const catergoryModel = mongoose.model("Categorys", categorySchema);
-    const productModel = mongoose.model("Products", productSchema);
-
+  while (runApp) {
     // Start Menu
 
     console.log("--------------Main Menu---------------");
@@ -49,17 +56,10 @@ const main = async () => {
     console.log("13.  View all sales");
     console.log("14.  View sum of all profits");
     console.log("15. Exit application");
-  } catch (error) {
-    console.log(("Error fetching data:", error));
-  }
 
-  let runApp = true;
+    let choice = p("Make a choice by entering number: ");
 
-  const p = prompt();
-
-  while (runApp) {
-    let prompt = p("Make a choice by entering number: ");
-    switch (prompt) {
+    switch (choice) {
       case "1":
         console.clear();
         await addNewCategory();
@@ -122,94 +122,12 @@ const main = async () => {
       case "15":
         console.clear();
         // EXIT APP CODE
+
         break;
       default:
         console.log("Please enter a number between 1-5");
     }
   }
 };
+
 main();
-
-// async function addNewCategory() {
-//   // Function to add new category
-//   let name = p("Enter category name: ");
-//   let catergoryType = p("Enter category type: ");
-
-//   let newCategory = {
-//     name,
-//     catergoryType,
-//   };
-//   await catergoryCol.create(newCategory);
-//   console.log(" You have added a new category: ");
-//   console.log(newCategory);
-// }
-
-// async function addNewProduct() {
-//   // Function to add new product
-//   console.log("Add new product");
-//   async function addNewProduct() {
-//     let Namee = p("Enter name of product");
-//     let Category = p("Enter Category");
-//     let Price = p("Enter Price");
-//     let Cost = p("Enter Cost");
-//     let Stock = p("Enter Stock");
-//   }
-//   let newProduct = {
-//     Namee,
-//     Category,
-//     Price,
-//     Cost,
-//     Stock,
-//   };
-//   await productModel.create(newProduct);
-//   console.log("You have added a new product");
-//   console.log(newProduct);
-// }
-
-// async function viewProductsByCategory() {
-//   // Function to view products by category
-// }
-
-// async function viewProductsBySupplier() {
-//   // Function to view products by supplier
-// }
-
-// async function viewAllOffersInPriceRange() {
-//   // Function to view all offers in a specific price range
-// }
-
-// async function offersFromCategory() {
-//   // Function to view all offers that contain a product from a specific category
-// }
-
-// async function viewOffersBasedOnStock() {
-//   // Function to view the number of offers based on the number of its products in stock
-// }
-
-// async function createOrderForProducts() {
-//   // Function to create order for individual products
-// }
-
-// async function createOrderForOffers() {
-//   // Function to create order for offers
-// }
-
-// async function shipOrders() {
-//   // Function to ship orders
-// }
-
-// async function addNewSupplier() {
-//   // Function to add new supplier
-// }
-
-// async function viewAllSuppliers() {
-//   // Function to view all suppliers
-// }
-
-// async function viewAllSales() {
-//   // Function to view all sales
-// }
-
-// async function viewSumOfProfits() {
-//   // Function to view the sum of all profits
-// }
