@@ -1,5 +1,8 @@
 import mongoose, { connect } from "mongoose";
 import prompt from "prompt-sync";
+import { addNewCategory, addNewProduct } from "./functions.js";
+
+const p = prompt();
 
 const main = async () => {
   try {
@@ -22,8 +25,6 @@ const main = async () => {
 
     const catergoryModel = mongoose.model("Categorys", categorySchema);
     const productModel = mongoose.model("Products", productSchema);
-
-    const p = prompt();
 
     // Start Menu
 
@@ -129,86 +130,86 @@ const main = async () => {
 };
 main();
 
-async function addNewCategory() {
-  // Function to add new category
-  let name = p("Enter category name: ");
-  let catergoryType = p("Enter category type: ");
+// async function addNewCategory() {
+//   // Function to add new category
+//   let name = p("Enter category name: ");
+//   let catergoryType = p("Enter category type: ");
 
-  let newCategory = {
-    name,
-    catergoryType,
-  };
-  await catergoryCol.create(newCategory);
-  console.log(" You have added a new category: ");
-  console.log(newCategory);
-}
+//   let newCategory = {
+//     name,
+//     catergoryType,
+//   };
+//   await catergoryCol.create(newCategory);
+//   console.log(" You have added a new category: ");
+//   console.log(newCategory);
+// }
 
-async function addNewProduct() {
-  // Function to add new product
-  console.log("Add new product");
-  async function addNewProduct() {
-    let Namee = p("Enter name of product");
-    let Category = p("Enter Category");
-    let Price = p("Enter Price");
-    let Cost = p("Enter Cost");
-    let Stock = p("Enter Stock");
-  }
-  let newProduct = {
-    Namee,
-    Category,
-    Price,
-    Cost,
-    Stock,
-  };
-  await productModel.create(newProduct);
-  console.log("You have added a new product");
-  console.log(newProduct);
-}
+// async function addNewProduct() {
+//   // Function to add new product
+//   console.log("Add new product");
+//   async function addNewProduct() {
+//     let Namee = p("Enter name of product");
+//     let Category = p("Enter Category");
+//     let Price = p("Enter Price");
+//     let Cost = p("Enter Cost");
+//     let Stock = p("Enter Stock");
+//   }
+//   let newProduct = {
+//     Namee,
+//     Category,
+//     Price,
+//     Cost,
+//     Stock,
+//   };
+//   await productModel.create(newProduct);
+//   console.log("You have added a new product");
+//   console.log(newProduct);
+// }
 
-async function viewProductsByCategory() {
-  // Function to view products by category
-}
+// async function viewProductsByCategory() {
+//   // Function to view products by category
+// }
 
-async function viewProductsBySupplier() {
-  // Function to view products by supplier
-}
+// async function viewProductsBySupplier() {
+//   // Function to view products by supplier
+// }
 
-async function viewAllOffersInPriceRange() {
-  // Function to view all offers in a specific price range
-}
+// async function viewAllOffersInPriceRange() {
+//   // Function to view all offers in a specific price range
+// }
 
-async function offersFromCategory() {
-  // Function to view all offers that contain a product from a specific category
-}
+// async function offersFromCategory() {
+//   // Function to view all offers that contain a product from a specific category
+// }
 
-async function viewOffersBasedOnStock() {
-  // Function to view the number of offers based on the number of its products in stock
-}
+// async function viewOffersBasedOnStock() {
+//   // Function to view the number of offers based on the number of its products in stock
+// }
 
-async function createOrderForProducts() {
-  // Function to create order for individual products
-}
+// async function createOrderForProducts() {
+//   // Function to create order for individual products
+// }
 
-async function createOrderForOffers() {
-  // Function to create order for offers
-}
+// async function createOrderForOffers() {
+//   // Function to create order for offers
+// }
 
-async function shipOrders() {
-  // Function to ship orders
-}
+// async function shipOrders() {
+//   // Function to ship orders
+// }
 
-async function addNewSupplier() {
-  // Function to add new supplier
-}
+// async function addNewSupplier() {
+//   // Function to add new supplier
+// }
 
-async function viewAllSuppliers() {
-  // Function to view all suppliers
-}
+// async function viewAllSuppliers() {
+//   // Function to view all suppliers
+// }
 
-async function viewAllSales() {
-  // Function to view all sales
-}
+// async function viewAllSales() {
+//   // Function to view all sales
+// }
 
-async function viewSumOfProfits() {
-  // Function to view the sum of all profits
-}
+// async function viewSumOfProfits() {
+//   // Function to view the sum of all profits
+// }
