@@ -1,6 +1,10 @@
 import mongoose, { connect } from "mongoose";
 import PromptSync from "prompt-sync";
-import { addNewCategory, viewProductsByCategory } from "./functions.js";
+import {
+  addNewCategory,
+  viewProductsByCategory,
+  offersFromCategory,
+} from "./functions.js";
 const p = PromptSync();
 import {
   SuppliersModel,

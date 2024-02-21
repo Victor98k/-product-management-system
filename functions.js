@@ -48,15 +48,15 @@ export async function addNewProduct() {
 }
 
 export async function viewProductsByCategory() {
-  const categoryName = p("Enter the category: "); // Get category input from the user
+  const categoryName = p("Enter the category: "); 
 
-  // First, find the category in the database to ensure it exists
-  const category = await CategoriesModel.findOne({ name: categoryName });
+  const category = await CategoriesModel.findOne({
+    name: { $regex: new RegExp(categoryName, "i") },
+  });
 
   if (category) {
-    // If the category exists, find products in that category
     const productsInCategory = await ProductsModel.find({
-      category: categoryName,
+      category: { $regex: new RegExp(categoryName, "i") },
     });
 
     if (productsInCategory.length > 0) {
@@ -79,7 +79,24 @@ export async function viewAllOffersInPriceRange() {
 }
 
 export async function offersFromCategory() {
-  // Function to view all offers that contain a product from a specific category
+  const categoryName = p("Enter the category: "); 
+  
+  const offersInCategory = await OffersModel.find({
+    category: { $regex: new RegExp(categoryName, "i") },
+  });
+
+  if (offersInCategory.length > 0) {
+    console.log(`Offers in category ${categoryName}:`);
+    offersInCategory.forEach((offer) => {
+      console.log(
+        `- Offer ID: ${offer._id}, Products: ${offer.products.join(
+          ", "
+        )}, Price: ${offer.price}, Active: ${offer.active}`
+      );
+    });
+  } else {
+    console.log(`No offers found in category ${categoryName}.`);
+  }
 }
 
 export async function viewOffersBasedOnStock() {
