@@ -128,6 +128,8 @@ const main = async () => {
         break;
       case "15":
         console.clear();
+        runApp = false;
+        console.clear();
         // EXIT APP CODE
 
         break;
