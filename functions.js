@@ -24,26 +24,24 @@ export async function addNewCategory() {
   console.log("You have added a new category");
   console.log(newCategory);
 }
-
+// Function to add new product
 export async function addNewProduct() {
-  const p = prompt();
-  // Function to add new product
   console.log("Add new product");
-  async function addNewProduct() {
-    let Namee = p("Enter name of product");
-    let Category = p("Enter Category");
-    let Price = p("Enter Price");
-    let Cost = p("Enter Cost");
-    let Stock = p("Enter Stock");
-  }
+  
+    let Namee = p("Enter name of product: ");
+    let Category = p("Enter Category: ");
+    let Price = p("Enter Price: ");
+    let Cost = p("Enter Cost: ");
+    let Stock = p("Enter Stock: ");
+  
   let newProduct = {
-    Namee,
-    Category,
-    Price,
-    Cost,
-    Stock,
+    name: Namee,
+  category: Category,
+  price: Price,
+  cost: Cost,
+  stock: Stock
   };
-  await productModel.create(newProduct);
+  await ProductsModel.create(newProduct);
   console.log("You have added a new product");
   console.log(newProduct);
 }
@@ -69,11 +67,38 @@ export async function viewProductsByCategory() {
   } else {
     console.log(`Category ${categoryName} does not exist.`);
   }
+
 }
 
+// Function to view products by supplier
 export async function viewProductsBySupplier() {
-  // Function to view products by supplier
-}
+  console.log("You have chosen to view products based on supplier.");
+
+  try {
+    const supplier = await SuppliersModel.find();
+    console.log("You can choose to view products from the following suppliers:\n ");
+    supplier.forEach((supplier, index) =>  {
+      console.log(`${index +1}. ${supplier}`);
+    });
+    console.log("\n");
+    const choice = parseInt(p("Choose supplier by entering a number: "));
+    const selectedSupplier = supplier[choice -1];
+
+    const products = await ProductsModel.find({
+      supplier: selectedSupplier.name
+    });
+    console.log(`\nProducts of Supplier "${selectedSupplier.name}":\n`);
+    products.forEach((product, index) => {
+      console.log(
+        `${index + 1}. ${product.name} - Price: $${product.price}, Stock: ${
+          product.stock
+        }`
+      );
+    });
+  } catch (error) {
+    console.error("Error viewing products by supplier:", error);
+  };
+};
 
 export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   console.log("View all offers within a price range");
@@ -162,9 +187,9 @@ export async function viewAllSuppliers() {
     );
   });
 }
-
+// Function to view all sales
 export async function viewAllSales() {
-  // Function to view all sales
+  
 }
 
 export async function viewSumOfProfits() {
