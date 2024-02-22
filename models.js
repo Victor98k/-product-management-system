@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const OffersSchema = mongoose.Schema({
+  offer: { type: String },
   products: { type: [String] },
   price: { type: Number },
   active: { type: Boolean },
@@ -25,9 +26,8 @@ const ProductsSchema = mongoose.Schema({
 });
 
 const SalesOrdersSchema = mongoose.Schema({
-  offer: {
-    type: String,
-  },
+  offer: OffersSchema,
+  product: ProductsSchema,
   quantity: {
     type: Number,
     required: true,
