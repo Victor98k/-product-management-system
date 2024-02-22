@@ -4,6 +4,8 @@ import {
   addNewCategory,
   viewProductsByCategory,
   offersFromCategory,
+  addNewProduct,
+  viewProductsBySupplier
 } from "./functions.js";
 const p = PromptSync();
 import {
