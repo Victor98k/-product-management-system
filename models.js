@@ -47,7 +47,7 @@ const SalesOrdersSchema = mongoose.Schema({
 
 const CategoriesSchema = mongoose.Schema({
   name: { type: String, required: true },
-  description: { type: String },
+  categoryDescription: { type: String },
 });
 
 export const ProductsModel = mongoose.model("Product", ProductsSchema);
