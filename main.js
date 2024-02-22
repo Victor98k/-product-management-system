@@ -8,6 +8,7 @@ import {
   viewProductsBySupplier,
   viewAllOffersInPriceRange,
   createOrderForProducts,
+  createOrderForOffers,
   viewAllSuppliers,
   viewSumOfProfits,
 } from "./functions.js";

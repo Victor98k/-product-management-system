@@ -5,7 +5,7 @@ import {
   SuppliersModel,
   ProductsModel,
   OffersModel,
-  SalesOrdersSchema,
+  OrdersModel,
 } from "./models.js";
 
 const p = promptSync();
@@ -25,6 +25,7 @@ export async function addNewCategory() {
   console.log("You have added a new category");
   console.log(newCategory);
 }
+
 // Function to add new product
 export async function addNewProduct() {
   console.log("Add new product");
@@ -47,6 +48,7 @@ export async function addNewProduct() {
   console.log(newProduct);
 }
 
+// Function to view products by category
 export async function viewProductsByCategory() {
   console.log("You have chosen to view products based on Category.");
 
@@ -110,10 +112,10 @@ export async function viewProductsBySupplier() {
   }
 }
 
-export async function viewAllordersInPriceRange(lowerLimit, upperLimit) {
+// Function to view all orders in a specific price range
+export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   console.log("View all orders within a price range");
 
-  // Function to view all orders in a specific price range
   const orders = await ordersModel.find({
     price: {
       $gte: lowerLimit,
@@ -131,74 +133,35 @@ export async function viewAllordersInPriceRange(lowerLimit, upperLimit) {
   });
 }
 
-export async function ordersFromCategory() {
-  console.log("You have chosen to view orders based on Category.");
+// Function to view offers from category
+export async function offersFromCategory() {
+  console.log("You have chosen to view offers based on Category.");
 
   try {
-    const allCategories = await ProductsModel.aggregate([
-      { $group: { _id: "$category" } },
-    ]);
+    const categories = await CategoriesModel.find();
+    console.log(
+      "You can choose to view products out of following categories:\n "
+    );
+    categories.forEach((category, index) => {
+      console.log(`${index + 1}. ${category.name}`);
+    });
+    console.log("\n");
+    const choice = parseInt(p("Choose category by entering the number: "));
+    const selectedCategory = categories[choice - 1];
 
-    // Generate the choices string including the option to exit
-    const choices = allCategories
-      .map((category) => category._id)
-      .concat("Exit")
-      .join(" / ");
-
-    // Use p-sync to capture user input
-    const categoryInput = p(`Choose a category (${choices}): `);
-
-    // Check if the user chose to exit
-    if (categoryInput === "Exit") {
-      return;
-    }
-
-    // Validate if the input is one of the categories
-    if (
-      !allCategories.map((category) => category._id).includes(categoryInput)
-    ) {
-      console.log("Invalid category selected.");
-      return;
-    }
-
-    const ordersContainingCategory = await ordersModel.aggregate([
-      {
-        $match: {
-          $or: [
-            { category: categoryInput },
-            { category: { $in: [categoryInput] } },
-          ],
-        },
-      },
-      {
-        $unwind: "$products",
-      },
-      {
-        $group: {
-          _id: "$_id",
-          price: { $first: "$price" },
-          active: { $first: "$active" },
-          products: { $push: "$products" },
-        },
-      },
-    ]);
-
-    if (ordersContainingCategory.length === 0) {
-      console.log(`No orders found for category: ${categoryInput}`);
-      return;
-    }
-
-    ordersContainingCategory.forEach((offer, index) => {
+    const offers = await OffersModel.find({
+      category: selectedCategory.name,
+    });
+    console.log(`\nProducts in category "${selectedCategory.name}":\n`);
+    offers.forEach((offer, index) => {
       console.log(
-        `Offer ${index + 1}:\nPrice: $${offer.price} \nActive: ${
-          offer.active ? "Yes" : "No"
-        }\nIncluded Products: ${offer.products.join(
-          ", "
-        )}\n------------------------`
+        `${index + 1}. ${offer.products} - Price: $${offer.price}, Active: ${
+          offer.active
+        }`
       );
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error viewing offers by category:", error);
   }
 }
 
@@ -223,8 +186,52 @@ export async function createOrderForProducts() {
   // Function to create order for individual products
 }
 
-export async function createOrderFororders() {
-  // Function to create order for orders
+// // Function to create order for offers
+export async function createOrderForOffers() {
+  try {
+    const offers = await OffersModel.find({ active: true });
+    console.log("Available Offers: \n");
+    offers.forEach((offer, index) => {
+      console.log(
+        `${index + 1}. Offer ID: ${offer._id} \n - Products: ${
+          offer.products
+        } \n - Price: $${offer.price} \n`
+      );
+    });
+
+    const selectedIndex =
+      parseInt(p("Enter the index of the offer to include in the order: ")) - 1;
+
+    if (
+      isNaN(selectedIndex) ||
+      selectedIndex < 0 ||
+      selectedIndex >= offers.length
+    ) {
+      console.log("Invalid offer index.");
+      return;
+    }
+
+    const selectedOffer = offers[selectedIndex];
+
+    const quantity = parseInt(
+      p(`Enter the quantity of Offer ${selectedOffer._id} to order: `)
+    );
+    if (isNaN(quantity) || quantity <= 0) {
+      console.log(`Invalid quantity for Offer ${selectedOffer._id}.`);
+      return;
+    }
+
+    const newOrder = new OrdersModel({
+      offer: selectedOffer._id,
+      quantity,
+      status: "pending",
+    });
+    await newOrder.save();
+
+    console.log(`Order created successfully for Offer ${selectedOffer._id}.`);
+  } catch (error) {
+    console.error("Error creating order for offers:", error);
+  }
 }
 
 export async function shipOrders() {
