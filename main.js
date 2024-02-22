@@ -4,14 +4,12 @@ import {
   addNewCategory,
   viewProductsByCategory,
   offersFromCategory,
-
   addNewProduct,
-  viewProductsBySupplier
+  viewProductsBySupplier,
   viewAllOffersInPriceRange,
   createOrderForProducts,
   viewAllSuppliers,
   viewSumOfProfits,
-
 } from "./functions.js";
 const p = PromptSync();
 import {
