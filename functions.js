@@ -1,26 +1,27 @@
-import PromptSync from "prompt-sync";
+import promptSync from "prompt-sync";
 import mongoose from "mongoose";
 import {
-  OrdersModel,
-  ProductsModel,
-  OffersModel,
-  SuppliersModel,
   CategoriesModel,
+  OffersModel,
+  OrdersModel,
+  SuppliersModel,
 } from "./models.js";
 
-const p = PromptSync();
+const prompt = promptSync();
 
 export async function addNewCategory() {
-  // Function to add new category
+  console.log("Add new category");
   let name = prompt("Enter category name: ");
-  let categoryType = prompt("Enter category type: ");
+  let categoryDescription = prompt("Enter category description: ");
 
   let newCategory = {
     name,
-    categoryType,
+    categoryDescription,
   };
-  await categoryCol.create(newCategory);
-  console.log("You have added a new category: ");
+
+  await CategoriesModel.create(newCategory);
+
+  console.log("You have added a new category");
   console.log(newCategory);
 }
 
@@ -48,7 +49,7 @@ export async function addNewProduct() {
 }
 
 export async function viewProductsByCategory() {
-  const categoryName = p("Enter the category: "); 
+  const categoryName = p("Enter the category: ");
 
   const category = await CategoriesModel.findOne({
     name: { $regex: new RegExp(categoryName, "i") },
@@ -74,13 +75,30 @@ export async function viewProductsBySupplier() {
   // Function to view products by supplier
 }
 
-export async function viewAllOffersInPriceRange() {
+export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
+  console.log("View all offers within a price range");
+
   // Function to view all offers in a specific price range
+  const offers = await OffersModel.find({
+    price: {
+      $gte: lowerLimit,
+      $lte: upperLimit,
+    },
+  });
+  console.log(
+    `Offers within the price range of ${lowerLimit} and ${upperLimit}`
+  );
+  offers.forEach((offer) => {
+    console.log(
+      ` Products: ${offer.products.join(", ")},  
+        Price: ${offer.price}, Active: ${offer.active}`
+    );
+  });
 }
 
 export async function offersFromCategory() {
-  const categoryName = p("Enter the category: "); 
-  
+  const categoryName = p("Enter the category: ");
+
   const offersInCategory = await OffersModel.find({
     category: { $regex: new RegExp(categoryName, "i") },
   });
@@ -104,6 +122,19 @@ export async function viewOffersBasedOnStock() {
 }
 
 export async function createOrderForProducts() {
+  console.log("Create order for products");
+  let productName = prompt("Enter the product name: ");
+  let quantity = prompt("Enter the quantity: ");
+  let additionalDetail = prompt("Enter additional detail: ");
+
+  let product = await OrdersModel.findOne({
+    name: { $regex: new RegExp(productName, "i") },
+  });
+  console.log(
+    `Product: ${productName},
+     Quantity: ${quantity}, 
+     Additional Detail: ${additionalDetail}`
+  );
   // Function to create order for individual products
 }
 
@@ -121,6 +152,15 @@ export async function addNewSupplier() {
 
 export async function viewAllSuppliers() {
   // Function to view all suppliers
+  console.log("View all suppliers");
+  const suppliers = await SuppliersModel.find();
+  console.log("All suppliers");
+  suppliers.forEach((supplier) => {
+    console.log(
+      `Name: ${supplier.name}, 
+      Contact: ${supplier.contact.name}`
+    );
+  });
 }
 
 export async function viewAllSales() {
@@ -129,4 +169,36 @@ export async function viewAllSales() {
 
 export async function viewSumOfProfits() {
   // Function to view the sum of all profits
+  console.log("View sum of all profits");
+
+  let choice = prompt(
+    "Enter 'all' to view all offers\nor 'product' to view offers for a specific product: "
+  );
+
+  let offers;
+  let productName; // Declare productName here
+
+  if (choice.toLowerCase() === "product") {
+    productName = prompt("Enter the name of the product: "); // Don't redeclare productName, just assign the value
+    offers = await OffersModel.find({
+      products: {
+        $in: [productName],
+      },
+    });
+  } else {
+    offers = await OffersModel.find();
+  }
+
+  let totalProfit = 0;
+  offers.forEach((offer) => {
+    totalProfit += offer.price;
+  });
+
+  if (choice.toLowerCase() === "product") {
+    console.log(
+      `Total profit from offers containing ${productName}: ${totalProfit}`
+    );
+  } else {
+    console.log(`Total profit: ${totalProfit}`);
+  }
 }
