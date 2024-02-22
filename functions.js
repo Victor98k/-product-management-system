@@ -1,10 +1,11 @@
-import promptSync from "p-sync";
+import promptSync from "prompt-sync";
 import mongoose from "mongoose";
 import {
   CategoriesModel,
   OffersModel,
   OrdersModel,
   SuppliersModel,
+  ProductsModel,
 } from "./models.js";
 
 const p = promptSync();
@@ -27,19 +28,19 @@ export async function addNewCategory() {
 // Function to add new product
 export async function addNewProduct() {
   console.log("Add new product");
-  
-    let Namee = p("Enter name of product: ");
-    let Category = p("Enter Category: ");
-    let Price = p("Enter Price: ");
-    let Cost = p("Enter Cost: ");
-    let Stock = p("Enter Stock: ");
-  
+
+  let Namee = p("Enter name of product: ");
+  let Category = p("Enter Category: ");
+  let Price = p("Enter Price: ");
+  let Cost = p("Enter Cost: ");
+  let Stock = p("Enter Stock: ");
+
   let newProduct = {
     name: Namee,
-  category: Category,
-  price: Price,
-  cost: Cost,
-  stock: Stock
+    category: Category,
+    price: Price,
+    cost: Cost,
+    stock: Stock,
   };
   await ProductsModel.create(newProduct);
   console.log("You have added a new product");
@@ -56,7 +57,6 @@ export async function viewProductsByCategory() {
     );
     categories.forEach((category, index) => {
       console.log(`${index + 1}. ${category.name}`);
-
     });
     console.log("\n");
     const choice = parseInt(p("Choose category by entering the number: "));
@@ -76,7 +76,6 @@ export async function viewProductsByCategory() {
   } catch (error) {
     console.error("Error viewing products by category:", error);
   }
-
 }
 
 // Function to view products by supplier
@@ -85,16 +84,18 @@ export async function viewProductsBySupplier() {
 
   try {
     const supplier = await SuppliersModel.find();
-    console.log("You can choose to view products from the following suppliers:\n ");
-    supplier.forEach((supplier, index) =>  {
-      console.log(`${index +1}. ${supplier}`);
+    console.log(
+      "You can choose to view products from the following suppliers:\n "
+    );
+    supplier.forEach((supplier, index) => {
+      console.log(`${index + 1}. ${supplier}`);
     });
     console.log("\n");
     const choice = parseInt(p("Choose supplier by entering a number: "));
-    const selectedSupplier = supplier[choice -1];
+    const selectedSupplier = supplier[choice - 1];
 
     const products = await ProductsModel.find({
-      supplier: selectedSupplier.name
+      supplier: selectedSupplier.name,
     });
     console.log(`\nProducts of Supplier "${selectedSupplier.name}":\n`);
     products.forEach((product, index) => {
@@ -106,8 +107,8 @@ export async function viewProductsBySupplier() {
     });
   } catch (error) {
     console.error("Error viewing products by supplier:", error);
-  };
-};
+  }
+}
 
 export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   console.log("View all offers within a price range");
@@ -247,9 +248,7 @@ export async function viewAllSuppliers() {
   });
 }
 // Function to view all sales
-export async function viewAllSales() {
-  
-}
+export async function viewAllSales() {}
 
 export async function viewSumOfProfits() {
   // Function to view the sum of all profits
