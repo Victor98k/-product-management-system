@@ -4,6 +4,10 @@ import {
   addNewCategory,
   viewProductsByCategory,
   offersFromCategory,
+  viewAllOffersInPriceRange,
+  createOrderForProducts,
+  viewAllSuppliers,
+  viewSumOfProfits,
 } from "./functions.js";
 const p = PromptSync();
 import {
@@ -88,7 +92,9 @@ const main = async () => {
         break;
       case "5":
         console.clear();
-        await viewAllOffersInPriceRange();
+        let lowerLimit = p("Enter the lower limit of the price range:");
+        let upperLimit = p("Enter the upper limit of the price range:");
+        await viewAllOffersInPriceRange(lowerLimit, upperLimit);
         break;
       case "6":
         console.clear();
@@ -100,6 +106,7 @@ const main = async () => {
         break;
       case "8":
         console.clear();
+
         await createOrderForProducts();
         break;
       case "9":
@@ -125,10 +132,11 @@ const main = async () => {
       case "14":
         console.clear();
         await viewSumOfProfits();
+
         break;
       case "15":
         console.clear();
-        // EXIT APP CODE
+        runApp = false;
 
         break;
       default:
