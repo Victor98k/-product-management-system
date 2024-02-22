@@ -1,4 +1,4 @@
-import promptSync from "prompt-sync";
+import promptSync from "p-sync";
 import mongoose from "mongoose";
 import {
   CategoriesModel,
@@ -11,8 +11,8 @@ const p = promptSync();
 
 export async function addNewCategory() {
   console.log("Add new category");
-  let name = prompt("Enter category name: ");
-  let categoryDescription = prompt("Enter category description: ");
+  let name = p("Enter category name: ");
+  let categoryDescription = p("Enter category description: ");
 
   let newCategory = {
     name,
@@ -144,7 +144,7 @@ export async function offersFromCategory() {
       .concat("Exit")
       .join(" / ");
 
-    // Use prompt-sync to capture user input
+    // Use p-sync to capture user input
     const categoryInput = p(`Choose a category (${choices}): `);
 
     // Check if the user chose to exit
@@ -207,9 +207,9 @@ export async function viewOffersBasedOnStock() {
 
 export async function createOrderForProducts() {
   console.log("Create order for products");
-  let productName = prompt("Enter the product name: ");
-  let quantity = prompt("Enter the quantity: ");
-  let additionalDetail = prompt("Enter additional detail: ");
+  let productName = p("Enter the product name: ");
+  let quantity = p("Enter the quantity: ");
+  let additionalDetail = p("Enter additional detail: ");
 
   let product = await OrdersModel.findOne({
     name: { $regex: new RegExp(productName, "i") },
@@ -255,7 +255,7 @@ export async function viewSumOfProfits() {
   // Function to view the sum of all profits
   console.log("View sum of all profits");
 
-  let choice = prompt(
+  let choice = p(
     "Enter 'all' to view all offers\nor 'product' to view offers for a specific product: "
   );
 
@@ -263,7 +263,7 @@ export async function viewSumOfProfits() {
   let productName; // Declare productName here
 
   if (choice.toLowerCase() === "product") {
-    productName = prompt("Enter the name of the product: "); // Don't redeclare productName, just assign the value
+    productName = p("Enter the name of the product: "); // Don't redeclare productName, just assign the value
     offers = await OffersModel.find({
       products: {
         $in: [productName],
