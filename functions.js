@@ -1,10 +1,11 @@
-import promptSync from "p-sync";
+import promptSync from "prompt-sync";
 import mongoose from "mongoose";
 import {
   CategoriesModel,
-  OffersModel,
-  OrdersModel,
   SuppliersModel,
+  ProductsModel,
+  OffersModel,
+  SalesOrdersSchema,
 } from "./models.js";
 
 const p = promptSync();
@@ -109,20 +110,20 @@ export async function viewProductsBySupplier() {
   }
 }
 
-export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
-  console.log("View all offers within a price range");
+export async function viewAllordersInPriceRange(lowerLimit, upperLimit) {
+  console.log("View all orders within a price range");
 
-  // Function to view all offers in a specific price range
-  const offers = await OffersModel.find({
+  // Function to view all orders in a specific price range
+  const orders = await ordersModel.find({
     price: {
       $gte: lowerLimit,
       $lte: upperLimit,
     },
   });
   console.log(
-    `Offers within the price range of ${lowerLimit} and ${upperLimit}`
+    `orders within the price range of ${lowerLimit} and ${upperLimit}`
   );
-  offers.forEach((offer) => {
+  orders.forEach((offer) => {
     console.log(
       ` Products: ${offer.products.join(", ")},  
         Price: ${offer.price}, Active: ${offer.active}`
@@ -130,8 +131,8 @@ export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   });
 }
 
-export async function offersFromCategory() {
-  console.log("You have chosen to view offers based on Category.");
+export async function ordersFromCategory() {
+  console.log("You have chosen to view orders based on Category.");
 
   try {
     const allCategories = await ProductsModel.aggregate([
@@ -160,7 +161,7 @@ export async function offersFromCategory() {
       return;
     }
 
-    const offersContainingCategory = await OffersModel.aggregate([
+    const ordersContainingCategory = await ordersModel.aggregate([
       {
         $match: {
           $or: [
@@ -182,12 +183,12 @@ export async function offersFromCategory() {
       },
     ]);
 
-    if (offersContainingCategory.length === 0) {
-      console.log(`No offers found for category: ${categoryInput}`);
+    if (ordersContainingCategory.length === 0) {
+      console.log(`No orders found for category: ${categoryInput}`);
       return;
     }
 
-    offersContainingCategory.forEach((offer, index) => {
+    ordersContainingCategory.forEach((offer, index) => {
       console.log(
         `Offer ${index + 1}:\nPrice: $${offer.price} \nActive: ${
           offer.active ? "Yes" : "No"
@@ -201,8 +202,8 @@ export async function offersFromCategory() {
   }
 }
 
-export async function viewOffersBasedOnStock() {
-  // Function to view the number of offers based on the number of its products in stock
+export async function viewordersBasedOnStock() {
+  // Function to view the number of orders based on the number of its products in stock
 }
 
 export async function createOrderForProducts() {
@@ -222,8 +223,8 @@ export async function createOrderForProducts() {
   // Function to create order for individual products
 }
 
-export async function createOrderForOffers() {
-  // Function to create order for offers
+export async function createOrderFororders() {
+  // Function to create order for orders
 }
 
 export async function shipOrders() {
@@ -254,31 +255,35 @@ export async function viewSumOfProfits() {
   console.log("View sum of all profits");
 
   let choice = p(
-    "Enter 'all' to view all offers\nor 'product' to view offers for a specific product: "
+    "Enter 'all' to view all orders\nor 'product' to view orders for a specific product: "
   );
 
-  let offers;
-  let productName; // Declare productName here
+  let orders;
+  let productName;
 
   if (choice.toLowerCase() === "product") {
-    productName = p("Enter the name of the product: "); // Don't redeclare productName, just assign the value
-    offers = await OffersModel.find({
+    productName = p("Enter the name of the product: ");
+    orders = await SalesOrdersSchema.find({
       products: {
         $in: [productName],
       },
     });
   } else {
-    offers = await OffersModel.find();
+    orders = await SalesOrdersSchema.find();
   }
 
   let totalProfit = 0;
-  offers.forEach((offer) => {
-    totalProfit += offer.price;
+  orders.forEach((order) => {
+    let profit = order.price;
+    if (order.products.length > 10) {
+      profit *= 0.9; // Apply 10% tax
+    }
+    totalProfit += profit;
   });
 
   if (choice.toLowerCase() === "product") {
     console.log(
-      `Total profit from offers containing ${productName}: ${totalProfit}`
+      `Total profit from orders containing ${productName}: ${totalProfit}`
     );
   } else {
     console.log(`Total profit: ${totalProfit}`);
