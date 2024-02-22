@@ -34,7 +34,7 @@ const connectToDatabase = async () => {
     console.log("ERROR 404 - Could not connect to MongoDB", error);
   }
 };
-connectToDatabase();
+await connectToDatabase();
 
 const main = async () => {
   let runApp = true;

@@ -48,25 +48,33 @@ export async function addNewProduct() {
 }
 
 export async function viewProductsByCategory() {
-  const categoryName = p("Enter the category: "); 
+  console.log("You have chosen to view products based on Category.");
 
-  const category = await CategoriesModel.findOne({
-    name: { $regex: new RegExp(categoryName, "i") },
-  });
-
-  if (category) {
-    const productsInCategory = await ProductsModel.find({
-      category: { $regex: new RegExp(categoryName, "i") },
+  try {
+    const categories = await CategoriesModel.find();
+    console.log(
+      "You can choose to view products out of following categories:\n "
+    );
+    categories.forEach((category, index) => {
+      console.log(`${index + 1}. ${category.name}`);
     });
+    console.log("\n");
+    const choice = parseInt(p("Choose category by entering the number: "));
+    const selectedCategory = categories[choice - 1];
 
-    if (productsInCategory.length > 0) {
-      console.log(`Products in category ${categoryName}:`);
-      productsInCategory.forEach((product) => console.log(`- ${product.name}`));
-    } else {
-      console.log(`No products found in category ${categoryName}.`);
-    }
-  } else {
-    console.log(`Category ${categoryName} does not exist.`);
+    const products = await ProductsModel.find({
+      category: selectedCategory.name,
+    });
+    console.log(`\nProducts in category "${selectedCategory.name}":\n`);
+    products.forEach((product, index) => {
+      console.log(
+        `${index + 1}. ${product.name} - Price: $${product.price}, Stock: ${
+          product.stock
+        }`
+      );
+    });
+  } catch (error) {
+    console.error("Error viewing products by category:", error);
   }
 }
 
@@ -79,23 +87,74 @@ export async function viewAllOffersInPriceRange() {
 }
 
 export async function offersFromCategory() {
-  const categoryName = p("Enter the category: "); 
-  
-  const offersInCategory = await OffersModel.find({
-    category: { $regex: new RegExp(categoryName, "i") },
-  });
+  console.log("You have chosen to view offers based on Category.");
+  console.log("You have chosen to view offers based on Category.");
 
-  if (offersInCategory.length > 0) {
-    console.log(`Offers in category ${categoryName}:`);
-    offersInCategory.forEach((offer) => {
+  try {
+    const allCategories = await ProductsModel.aggregate([
+      { $group: { _id: "$category" } },
+    ]);
+
+    // Generate the choices string including the option to exit
+    const choices = allCategories
+      .map((category) => category._id)
+      .concat("Exit")
+      .join(" / ");
+
+    // Use prompt-sync to capture user input
+    const categoryInput = p(`Choose a category (${choices}): `);
+
+    // Check if the user chose to exit
+    if (categoryInput === "Exit") {
+      return;
+    }
+
+    // Validate if the input is one of the categories
+    if (
+      !allCategories.map((category) => category._id).includes(categoryInput)
+    ) {
+      console.log("Invalid category selected.");
+      return;
+    }
+
+    const offersContainingCategory = await OffersModel.aggregate([
+      {
+        $match: {
+          $or: [
+            { category: categoryInput },
+            { category: { $in: [categoryInput] } },
+          ],
+        },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $group: {
+          _id: "$_id",
+          price: { $first: "$price" },
+          active: { $first: "$active" },
+          products: { $push: "$products" },
+        },
+      },
+    ]);
+
+    if (offersContainingCategory.length === 0) {
+      console.log(`No offers found for category: ${categoryInput}`);
+      return;
+    }
+
+    offersContainingCategory.forEach((offer, index) => {
       console.log(
-        `- Offer ID: ${offer._id}, Products: ${offer.products.join(
+        `Offer ${index + 1}:\nPrice: $${offer.price} \nActive: ${
+          offer.active ? "Yes" : "No"
+        }\nIncluded Products: ${offer.products.join(
           ", "
-        )}, Price: ${offer.price}, Active: ${offer.active}`
+        )}\n------------------------`
       );
     });
-  } else {
-    console.log(`No offers found in category ${categoryName}.`);
+  } catch (error) {
+    console.log(error);
   }
 }
 
