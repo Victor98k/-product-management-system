@@ -1,4 +1,4 @@
-import promptSync from "prompt-sync";
+import promptSync from "p-sync";
 import mongoose from "mongoose";
 import {
   CategoriesModel,
@@ -7,12 +7,12 @@ import {
   SuppliersModel,
 } from "./models.js";
 
-const prompt = promptSync();
+const p = promptSync();
 
 export async function addNewCategory() {
   console.log("Add new category");
-  let name = prompt("Enter category name: ");
-  let categoryDescription = prompt("Enter category description: ");
+  let name = p("Enter category name: ");
+  let categoryDescription = p("Enter category description: ");
 
   let newCategory = {
     name,
@@ -27,19 +27,19 @@ export async function addNewCategory() {
 // Function to add new product
 export async function addNewProduct() {
   console.log("Add new product");
-  
-    let Namee = p("Enter name of product: ");
-    let Category = p("Enter Category: ");
-    let Price = p("Enter Price: ");
-    let Cost = p("Enter Cost: ");
-    let Stock = p("Enter Stock: ");
-  
+
+  let Namee = p("Enter name of product: ");
+  let Category = p("Enter Category: ");
+  let Price = p("Enter Price: ");
+  let Cost = p("Enter Cost: ");
+  let Stock = p("Enter Stock: ");
+
   let newProduct = {
     name: Namee,
-  category: Category,
-  price: Price,
-  cost: Cost,
-  stock: Stock
+    category: Category,
+    price: Price,
+    cost: Cost,
+    stock: Stock,
   };
   await ProductsModel.create(newProduct);
   console.log("You have added a new product");
@@ -56,7 +56,6 @@ export async function viewProductsByCategory() {
     );
     categories.forEach((category, index) => {
       console.log(`${index + 1}. ${category.name}`);
-
     });
     console.log("\n");
     const choice = parseInt(p("Choose category by entering the number: "));
@@ -76,7 +75,6 @@ export async function viewProductsByCategory() {
   } catch (error) {
     console.error("Error viewing products by category:", error);
   }
-
 }
 
 // Function to view products by supplier
@@ -85,16 +83,18 @@ export async function viewProductsBySupplier() {
 
   try {
     const supplier = await SuppliersModel.find();
-    console.log("You can choose to view products from the following suppliers:\n ");
-    supplier.forEach((supplier, index) =>  {
-      console.log(`${index +1}. ${supplier}`);
+    console.log(
+      "You can choose to view products from the following suppliers:\n "
+    );
+    supplier.forEach((supplier, index) => {
+      console.log(`${index + 1}. ${supplier}`);
     });
     console.log("\n");
     const choice = parseInt(p("Choose supplier by entering a number: "));
-    const selectedSupplier = supplier[choice -1];
+    const selectedSupplier = supplier[choice - 1];
 
     const products = await ProductsModel.find({
-      supplier: selectedSupplier.name
+      supplier: selectedSupplier.name,
     });
     console.log(`\nProducts of Supplier "${selectedSupplier.name}":\n`);
     products.forEach((product, index) => {
@@ -106,8 +106,8 @@ export async function viewProductsBySupplier() {
     });
   } catch (error) {
     console.error("Error viewing products by supplier:", error);
-  };
-};
+  }
+}
 
 export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   console.log("View all offers within a price range");
@@ -144,7 +144,7 @@ export async function offersFromCategory() {
       .concat("Exit")
       .join(" / ");
 
-    // Use prompt-sync to capture user input
+    // Use p-sync to capture user input
     const categoryInput = p(`Choose a category (${choices}): `);
 
     // Check if the user chose to exit
@@ -207,9 +207,9 @@ export async function viewOffersBasedOnStock() {
 
 export async function createOrderForProducts() {
   console.log("Create order for products");
-  let productName = prompt("Enter the product name: ");
-  let quantity = prompt("Enter the quantity: ");
-  let additionalDetail = prompt("Enter additional detail: ");
+  let productName = p("Enter the product name: ");
+  let quantity = p("Enter the quantity: ");
+  let additionalDetail = p("Enter additional detail: ");
 
   let product = await OrdersModel.findOne({
     name: { $regex: new RegExp(productName, "i") },
@@ -247,15 +247,13 @@ export async function viewAllSuppliers() {
   });
 }
 // Function to view all sales
-export async function viewAllSales() {
-  
-}
+export async function viewAllSales() {}
 
 export async function viewSumOfProfits() {
   // Function to view the sum of all profits
   console.log("View sum of all profits");
 
-  let choice = prompt(
+  let choice = p(
     "Enter 'all' to view all offers\nor 'product' to view offers for a specific product: "
   );
 
@@ -263,7 +261,7 @@ export async function viewSumOfProfits() {
   let productName; // Declare productName here
 
   if (choice.toLowerCase() === "product") {
-    productName = prompt("Enter the name of the product: "); // Don't redeclare productName, just assign the value
+    productName = p("Enter the name of the product: "); // Don't redeclare productName, just assign the value
     offers = await OffersModel.find({
       products: {
         $in: [productName],
