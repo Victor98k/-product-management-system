@@ -7,7 +7,7 @@ import {
   SuppliersModel,
 } from "./models.js";
 
-const prompt = promptSync();
+const p = promptSync();
 
 export async function addNewCategory() {
   console.log("Add new category");
