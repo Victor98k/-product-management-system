@@ -10,7 +10,9 @@ import {
   viewAllOffersInPriceRange,
   createOrderForProducts,
   createOrderForOffers,
+  shipOrders,
   viewAllSuppliers,
+  viewAllSales,
   viewSumOfProfits,
 } from "./functions.js";
 const p = PromptSync();
