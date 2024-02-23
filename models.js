@@ -1,13 +1,5 @@
 import mongoose from "mongoose";
 
-const OffersSchema = mongoose.Schema({
-  offer: { type: String },
-  products: { type: [String] },
-  price: { type: Number },
-  active: { type: Boolean },
-  category: { type: [String] },
-});
-
 const SuppliersSchema = mongoose.Schema({
   name: { type: String },
   contact: {
@@ -23,6 +15,15 @@ const ProductsSchema = mongoose.Schema({
   cost: { type: Number },
   stock: { type: Number },
   supplier: SuppliersSchema,
+});
+
+const OffersSchema = mongoose.Schema({
+  offer: { type: String },
+  products: { type: [String] },
+  offerProducts: [ProductsSchema], // Embedding an array of ProductsSchema
+  price: { type: Number },
+  active: { type: Boolean },
+  category: { type: [String] },
 });
 
 const SalesOrdersSchema = mongoose.Schema({
