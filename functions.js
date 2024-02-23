@@ -52,12 +52,12 @@ export async function addNewProduct() {
             "\nYou have chosen to add product into an existing category."
           );
 
-          let choice = parseInt(
+          let categoryChoice = parseInt(
             p(
               "Choose category by entering the number from the current categories above: "
             )
           );
-          let selectedCategory = categories[choice - 1];
+          let selectedCategory = categories[categoryChoice - 1];
 
           let newCategory = selectedCategory.name;
 
@@ -86,12 +86,12 @@ export async function addNewProduct() {
                 "You have chosen to add product from an existing supplier."
               );
 
-              let choice = parseInt(
+              let supplierChoice = parseInt(
                 p(
                   "Choose a supplier by entering the number from the current suppliers above: "
                 )
               );
-              let selectedSupplier = currentSuppliers[choice - 1];
+              let selectedSupplier = currentSuppliers[supplierChoice - 1];
 
               let newSupplier = {
                 name: selectedSupplier.name,
@@ -258,7 +258,7 @@ export async function addNewProduct() {
   } catch (error) {
     console.log("An Error occured: " + error);
   }
-};
+}
 
 // Function to view products by category
 export async function viewProductsByCategory() {
@@ -481,50 +481,68 @@ export async function createOrderForProducts() {
 // // Function to create order for offers
 export async function createOrderForOffers() {
   try {
-    const offers = await OffersModel.find({ active: true });
-    console.log("Available Offers: \n");
-    offers.forEach((offer, index) => {
+    // Fetch all active offers
+    const activeOffers = await OffersModel.find({ active: true }).select(
+      "offer products offerProducts price -_id"
+    );
+    console.log("Available Offers:");
+    activeOffers.forEach((offer, index) => {
       console.log(
-        `${index + 1}. Offer: \n - Products: ${offer.products} \n - Price: $${
-          offer.price
-        } \n`
+        `${index + 1}. ${offer.offer}:\n   Products: ${offer.products.join(
+          ", "
+        )},\n   Price: $${offer.price} \n`
       );
     });
 
-    const selectedIndex =
-      parseInt(p("Enter the index of the offer to include in the order: ")) - 1;
-
-    if (
-      isNaN(selectedIndex) ||
-      selectedIndex < 0 ||
-      selectedIndex >= offers.length
-    ) {
-      console.log("Invalid offer index.");
+    // User selects an offer
+    const offerIndex =
+      parseInt(
+        p("Enter the index(!) of the offer you want to place an order for: ")
+      ) - 1;
+    if (offerIndex < 0 || offerIndex >= activeOffers.length) {
+      console.log("Invalid selection.");
       return;
     }
+    const selectedOffer = activeOffers[offerIndex];
 
-    const selectedOffer = offers[selectedIndex];
+    //console.log(selectedOffer);
 
+    // User specifies the quantity
     const quantity = parseInt(
-      p(`Enter the quantity of Offer ${selectedOffer.offer} to order: `)
+      p("Enter the quantity of the offer you want to order: ")
     );
     if (isNaN(quantity) || quantity <= 0) {
-      console.log(`Invalid quantity for Offer ${selectedOffer.offer}.`);
+      console.log("Invalid quantity.");
       return;
     }
 
-    const newOrder = new OrdersModel({
-      offer: selectedOffer.offer,
-      quantity,
-      status: "pending",
-    });
-    await newOrder.save();
+    // Calculate total price based on selected offer and quantity
+    const totalPrice = selectedOffer.price * quantity;
 
-    console.log(`Order created successfully for ${selectedOffer.offer}.`);
+    // Create a new order
+    const newOrder = new OrdersModel({
+      offer: {
+        offer: selectedOffer.offer,
+        products: selectedOffer.products,
+        price: selectedOffer.price,
+        active: selectedOffer.active,
+        category: selectedOffer.category,
+      },
+      quantity: quantity,
+      status: "pending", // Assuming 'pending' is a valid status
+      total_price: totalPrice,
+    });
+
+    await newOrder.save();
+    console.log("\nOrder placed successfully.");
+    console.log(
+      `\nNew order placed: \n  ${selectedOffer.offer} \n   Quantity: ${newOrder.quantity} \n   Total price of order: $${newOrder.total_price}`
+    );
   } catch (error) {
-    console.error("Error creating order for :", error);
+    console.error("Error creating order for offers:", error);
   }
 }
+
 // Function to ship orders
 export async function shipOrders() {
   const response = p(
