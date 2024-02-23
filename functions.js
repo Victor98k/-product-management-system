@@ -315,9 +315,11 @@ export async function createOrderForOffers() {
 }
 // Function to ship orders
 export async function shipOrders() {
-  const response = p("Has the product been shipped? (Type 'yes' for Yes, any other answer for No): ");
+  const response = p(
+    "Has the product been shipped? (Type 'yes' for Yes, any other answer for No): "
+  );
 
-  if (response.toLowerCase() === 'ja') {
+  if (response.toLowerCase() === "ja") {
     console.log("The product has been shipped.");
   } else {
     console.log("The product has not been shipped.");
@@ -370,7 +372,13 @@ export async function viewAllSales() {
     }
 
     salesOrders.forEach((order, index) => {
-      console.log(`Order Number: ${order.orderNumber || 'N/A'}, Date: ${order.date || 'N/A'}, Status: ${order.status || 'N/A'}, Total Cost: ${order.totalCost || 'N/A'}`);
+      console.log(
+        `Order Number: ${order.orderNumber || "N/A"}, Date: ${
+          order.date || "N/A"
+        }, Status: ${order.status || "N/A"}, Total Cost: ${
+          order.totalCost || "N/A"
+        }`
+      );
     });
   } catch (error) {
     console.error("An error occurred while fetching sales orders:", error);
@@ -380,44 +388,70 @@ export async function viewAllSales() {
 export async function viewSumOfProfits() {
   // Function to view the sum of all profits
   console.log("View sum of all profits");
-
-  let choice = p(
-    "Enter 'all' to view all orders\nor 'product' to view orders for a specific product: "
+  console.log(
+    "Type 1 to view the sum of all profits, or type 2 to choose a specefic product:"
   );
 
-  let orders;
-  let productName;
+  let choice = p("Make a choice by entering a number: ");
 
-  if (choice.toLowerCase() === "product") {
-    productName = p("Enter the name of the product: ");
-    orders = await OrdersModel.find({
-      products: {
-        $in: [productName],
-      },
-    });
-  } else {
-    orders = await OrdersModel.find();
+  switch (choice) {
+    case "1":
+      console.clear();
+      console.log("Sum of all profits");
+      await OrdersModel.find();
+      console.log;
+      break;
+
+    case "2":
+      console.clear();
+      let productName = p("Enter the name of the product: ");
+
+      productName = OrdersModel.find({ products: productName });
+
+      let totalProfit = 0;
+      productName.forEach((productName) => {
+        productName.products.forEach((product) => {
+          if (
+            choice.toLowerCase() === "2" &&
+            product.products !== productName
+          ) {
+            return;
+          }
+          // Calculate the profit from this product
+          let profit = (product.price - product.cost) * product.quantity;
+          totalProfit += profit;
+        });
+      });
   }
 
-  let totalProfit = 0;
-  orders.forEach((order) => {
-    if (order.products) {
-      let profit = order.price;
-      if (order.products.length > 10) {
-        profit *= 0.9; // Apply 10% tax
-      }
-      totalProfit += profit;
-    } else {
-      console.log("An order without products was found.");
-    }
-  });
+  // if (choice.toLowerCase() === "product") {
+  //   orders = await OrdersModel.find({
+  //     products: {
+  //       $in: [OffersModel.find({ products: productName })],
+  //     },
+  //   });
+  // } else {
+  //   orders = await OffersModel.find();
+  // }
 
-  if (choice.toLowerCase() === "product") {
-    console.log(
-      `Total profit from orders containing ${productName}: ${totalProfit}`
-    );
-  } else {
-    console.log(`Total profit: ${totalProfit}`);
-  }
+  // let totalProfit = 0;
+  // orders.forEach((order) => {
+  //   order.products.forEach((product) => {
+  //     if (
+  //       choice.toLowerCase() === "product" &&
+  //       product.products !== productName
+  //     ) {
+  //       return;
+  //     }
+  //     // Calculate the profit from this product
+  //     let profit = (product.price - product.cost) * product.quantity;
+  //     totalProfit += profit;
+  //   });
+  // });
+
+  // if (choice.toLowerCase() === "product") {
+  //   console.log(`Total profit from sales of ${offer}: ${totalProfit}`);
+  // } else {
+  //   console.log(`Total profit from all sales: ${totalProfit}`);
+  // }
 }
-
