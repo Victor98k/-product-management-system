@@ -313,9 +313,15 @@ export async function createOrderForOffers() {
     console.error("Error creating order for offers:", error);
   }
 }
-
+// Function to ship orders
 export async function shipOrders() {
-  // Function to ship orders
+  const response = p("Has the product been shipped? (Type 'yes' for Yes, any other answer for No): ");
+
+  if (response.toLowerCase() === 'ja') {
+    console.log("The product has been shipped.");
+  } else {
+    console.log("The product has not been shipped.");
+  }
 }
 
 // Function to add new supplier
@@ -354,7 +360,22 @@ export async function viewAllSuppliers() {
   });
 }
 // Function to view all sales
-export async function viewAllSales() {}
+export async function viewAllSales() {
+  try {
+    const salesOrders = await OrdersModel.find();
+
+    if (salesOrders.length === 0) {
+      console.log("There are no sales orders to display.");
+      return;
+    }
+
+    salesOrders.forEach((order, index) => {
+      console.log(`Order Number: ${order.orderNumber || 'N/A'}, Date: ${order.date || 'N/A'}, Status: ${order.status || 'N/A'}, Total Cost: ${order.totalCost || 'N/A'}`);
+    });
+  } catch (error) {
+    console.error("An error occurred while fetching sales orders:", error);
+  }
+}
 
 export async function viewSumOfProfits() {
   // Function to view the sum of all profits
@@ -395,3 +416,4 @@ export async function viewSumOfProfits() {
     console.log(`Total profit: ${totalProfit}`);
   }
 }
+
