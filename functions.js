@@ -615,41 +615,75 @@ export async function viewAllSales() {
 }
 
 export async function viewSumOfProfits() {
-  // Function to view the sum of all profits
   console.log("View sum of all profits");
+  console.log("Type 1 to view the sum of all profits");
+  console.log("Type 2 to view the sum of profits for a specific product");
 
-  let choice = p(
-    "Enter 'all' to view all orders\nor 'product' to view orders for a specific product: "
-  );
+  let choice = p("Make a choice by entering a number: ");
+  let taxRate = 0.2;
 
-  let orders;
-  let productName;
+  switch (choice) {
+    case "1":
+      console.clear();
+      console.log("Sum of all profits");
 
-  if (choice.toLowerCase() === "product") {
-    productName = p("Enter the name of the product: ");
-    orders = await OrdersModel.find({
-      products: {
-        $in: [productName],
-      },
-    });
-  } else {
-    orders = await OrdersModel.find();
-  }
+      try {
+        let allOffers = await OffersModel.find({ active: true });
 
-  let totalProfit = 0;
-  orders.forEach((order) => {
-    let profit = order.price;
-    if (order.products.length > 10) {
-      profit *= 0.9; // Apply 10% tax
-    }
-    totalProfit += profit;
-  });
+        let totalProfit = 0;
+        allOffers.forEach((offer) => {
+          offer.offerProducts.forEach((product) => {
+            let profit = product.price - product.cost;
+            console.log(`Profit for ${product.name}: ${profit}`);
+            totalProfit += profit;
+          });
+        });
 
-  if (choice.toLowerCase() === "product") {
-    console.log(
-      `Total profit from orders containing ${productName}: ${totalProfit}`
-    );
-  } else {
-    console.log(`Total profit: ${totalProfit}`);
+        // KOLLA PÅ TAX SKITEN NU DRAS D AV PÅ TOTAL PROFIT
+        totalProfit = totalProfit * (1 - taxRate);
+
+        console.log(`Total Profit: ${totalProfit} kr`);
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      }
+
+      break;
+    case "2":
+      console.clear();
+      let productName = p("Enter the name of the product: ");
+      let specificOffers = await OffersModel.find({
+        "offerProducts.name": productName,
+        active: true,
+      });
+
+      if (specificOffers.length > 0) {
+        let specificProfit = 0;
+
+        specificOffers.forEach((offer) => {
+          offer.offerProducts.forEach((product) => {
+            // Check if product.quantity is a valid number, if not, set it to 1
+            let quantity = !isNaN(product.quantity) ? product.quantity : 1;
+
+            if (product.name === productName) {
+              let profit = (product.price - product.cost) * quantity;
+              console.log(
+                `Profit for ${productName} in ${offer.offer}: ${profit}`
+              );
+              specificProfit += profit;
+            }
+          });
+        });
+
+        // KOLLA TAX SKITEN NU
+        // Apply tax rate
+        specificProfit = specificProfit * (1 - taxRate);
+
+        console.log(
+          `Total Profit for ${productName} after taxes : ${specificProfit}kr`
+        );
+      } else {
+        console.log(`No offers found for product: ${productName}`);
+      }
+      break;
   }
 }
