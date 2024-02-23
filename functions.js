@@ -28,25 +28,237 @@ export async function addNewCategory() {
 
 // Function to add new product
 export async function addNewProduct() {
-  console.log("Add new product");
+  console.log("Add new product \n");
 
-  let Namee = p("Enter name of product: ");
-  let Category = p("Enter Category: ");
-  let Price = p("Enter Price: ");
-  let Cost = p("Enter Cost: ");
-  let Stock = p("Enter Stock: ");
+  try {
+    const categories = await CategoriesModel.find();
+    console.log("Current available categories:\n ");
+    categories.forEach((category, index) => {
+      console.log(`${index + 1}. ${category.name}`);
+    });
 
-  let newProduct = {
-    name: Namee,
-    category: Category,
-    price: Price,
-    cost: Cost,
-    stock: Stock,
-  };
-  await ProductsModel.create(newProduct);
-  console.log("You have added a new product");
-  console.log(newProduct);
-}
+    console.log(
+      "\nChoose an option for adding the new product, by entering corresponding number:"
+    );
+    console.log("1. Add the new product into existing category.");
+    console.log("2. Add a new category");
+    let choice = p("Enter your choice: ");
+
+    switch (choice) {
+      case "1":
+        try {
+          console.log("\n==============");
+          console.log(
+            "\nYou have chosen to add product into an existing category."
+          );
+
+          let choice = parseInt(
+            p(
+              "Choose category by entering the number from the current categories above: "
+            )
+          );
+          let selectedCategory = categories[choice - 1];
+
+          let newCategory = selectedCategory.name;
+
+          let newName = p("Enter name of new product: ");
+          let newPrice = p("Enter the price: ");
+          let newCost = p("Enter the cost: ");
+          let newStock = p("Enter the stock: ");
+
+          const currentSuppliers = await SuppliersModel.find();
+          console.log("Current available suppliers:\n");
+          currentSuppliers.forEach((supplier, index) => {
+            console.log(`${index + 1}. ${supplier.name}`);
+          });
+
+          console.log(
+            "\nChoose an option for adding the new product, by entering corresponding number:"
+          );
+          console.log("1. Add the new product from existing supplier.");
+          console.log("2. Add a new supplier");
+          let choiceSupplier = p("Enter your choice: ");
+
+          switch (choiceSupplier) {
+            case "1":
+              console.log("\n==============");
+              console.log(
+                "You have chosen to add product from an existing supplier."
+              );
+
+              let choice = parseInt(
+                p(
+                  "Choose a supplier by entering the number from the current suppliers above: "
+                )
+              );
+              let selectedSupplier = currentSuppliers[choice - 1];
+
+              let newSupplier = {
+                name: selectedSupplier.name,
+                contact: selectedSupplier.contact,
+              };
+
+              let newProduct = {
+                name: newName,
+                category: newCategory,
+                price: newPrice,
+                cost: newCost,
+                stock: newStock,
+                supplier: newSupplier,
+              };
+
+              await ProductsModel.create(newProduct);
+              console.log("You have added a new product");
+              console.log(newProduct);
+              break;
+            case "2":
+              try {
+                console.log("\nYou have chosen to add a new supplier");
+                const name = p("Enter name of new supplier: ");
+                const contactName = p("Enter new contact name: ");
+                const contactEmail = p("Enter new supplier email: ");
+
+                const newSupplier = new SuppliersModel({
+                  name: name,
+                  contact: {
+                    name: contactName,
+                    email: contactEmail,
+                  },
+                });
+
+                await newSupplier.save();
+                console.log(` \n Supplier "${name}" was added!`);
+
+                let newProduct = {
+                  name: newName,
+                  category: newCategory,
+                  price: newPrice,
+                  cost: newCost,
+                  stock: newStock,
+                  supplier: newSupplier,
+                };
+
+                await ProductsModel.create(newProduct);
+                console.log("You have added a new product");
+                console.log(newProduct);
+              } catch (error) {
+                console.log("\n An error occured! " + error);
+              }
+              break;
+          }
+        } catch (error) {
+          console.log("An Error occured: " + error);
+        }
+        break;
+      case "2":
+        console.log("You have chosen to add a new category.");
+        let newCategoryName = p("Enter category name: "); // Changed variable name for clarity
+        let newCategoryDescription = p("Enter category description: ");
+
+        let newCategory = {
+          name: newCategoryName, // Adjusted to match schema
+          categoryDescription: newCategoryDescription,
+        };
+
+        await CategoriesModel.create(newCategory);
+
+        console.log("You have added a new category");
+        console.log(newCategory);
+
+        let newName = p("Enter name of new product: ");
+        let newPrice = p("Enter the price: ");
+        let newCost = p("Enter the cost: ");
+        let newStock = p("Enter the stock: ");
+
+        const currentSuppliers = await SuppliersModel.find();
+        console.log("Current available suppliers:\n");
+        currentSuppliers.forEach((supplier, index) => {
+          console.log(`${index + 1}. ${supplier.name}`);
+        });
+
+        console.log(
+          "\nChoose an option for adding the new product, by entering corresponding number:"
+        );
+        console.log("1. Add the new product from existing supplier.");
+        console.log("2. Add a new supplier");
+        let choiceSupplier = p("Enter your choice: ");
+
+        switch (choiceSupplier) {
+          case "1":
+            console.log("\n==============");
+            console.log(
+              "You have chosen to add product from an existing supplier."
+            );
+
+            let choice = parseInt(
+              p(
+                "Choose a supplier by entering the number from the current suppliers above: "
+              )
+            );
+            let selectedSupplier = currentSuppliers[choice - 1];
+
+            let newSupplier = {
+              name: selectedSupplier.name,
+              contact: selectedSupplier.contact,
+            };
+
+            let newProduct = {
+              name: newName,
+              category: newCategoryName,
+              price: newPrice,
+              cost: newCost,
+              stock: newStock,
+              supplier: newSupplier,
+            };
+
+            await ProductsModel.create(newProduct);
+            console.log("You have added a new product");
+            console.log(newProduct);
+            break;
+          case "2":
+            try {
+              console.log("\nYou have chosen to add a new supplier");
+              const name = p("Enter name of new supplier: ");
+              const contactName = p("Enter new contact name: ");
+              const contactEmail = p("Enter new supplier email: ");
+
+              const newSupplier = new SuppliersModel({
+                name: name,
+                contact: {
+                  name: contactName,
+                  email: contactEmail,
+                },
+              });
+
+              await newSupplier.save();
+              console.log(` \n Supplier "${name}" was added!`);
+
+              let newProduct = {
+                name: newName,
+                category: newCategoryName,
+                price: newPrice,
+                cost: newCost,
+                stock: newStock,
+                supplier: {
+                  name: newSupplier.name,
+                  contact: newSupplier.contact,
+                },
+              };
+
+              await ProductsModel.create(newProduct);
+              console.log("You have added a new product");
+              console.log(newProduct);
+            } catch (error) {
+              console.log("\n An error occured! " + error);
+            }
+            break;
+        }
+        break;
+    }
+  } catch (error) {
+    console.log("An Error occured: " + error);
+  }
+};
 
 // Function to view products by category
 export async function viewProductsByCategory() {
