@@ -2,10 +2,10 @@ import promptSync from "prompt-sync";
 import mongoose from "mongoose";
 import {
   CategoriesModel,
-  OffersModel,
-  OrdersModel,
   SuppliersModel,
   ProductsModel,
+  OffersModel,
+  OrdersModel,
 } from "./models.js";
 
 const p = promptSync();
@@ -25,6 +25,7 @@ export async function addNewCategory() {
   console.log("You have added a new category");
   console.log(newCategory);
 }
+
 // Function to add new product
 export async function addNewProduct() {
   console.log("Add new product");
@@ -47,6 +48,7 @@ export async function addNewProduct() {
   console.log(newProduct);
 }
 
+// Function to view products by category
 export async function viewProductsByCategory() {
   console.log("You have chosen to view products based on Category.");
 
@@ -110,20 +112,20 @@ export async function viewProductsBySupplier() {
   }
 }
 
+// Function to view all orders in a specific price range
 export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
-  console.log("View all offers within a price range");
+  console.log("View all orders within a price range");
 
-  // Function to view all offers in a specific price range
-  const offers = await OffersModel.find({
+  const orders = await ordersModel.find({
     price: {
       $gte: lowerLimit,
       $lte: upperLimit,
     },
   });
   console.log(
-    `Offers within the price range of ${lowerLimit} and ${upperLimit}`
+    `orders within the price range of ${lowerLimit} and ${upperLimit}`
   );
-  offers.forEach((offer) => {
+  orders.forEach((offer) => {
     console.log(
       ` Products: ${offer.products.join(", ")},  
         Price: ${offer.price}, Active: ${offer.active}`
@@ -131,108 +133,212 @@ export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   });
 }
 
+// Function to view offers from category
 export async function offersFromCategory() {
   console.log("You have chosen to view offers based on Category.");
 
   try {
-    const allCategories = await ProductsModel.aggregate([
-      { $group: { _id: "$category" } },
-    ]);
+    const categories = await CategoriesModel.find();
+    console.log(
+      "You can choose to view products out of following categories:\n "
+    );
+    categories.forEach((category, index) => {
+      console.log(`${index + 1}. ${category.name}`);
+    });
+    console.log("\n");
+    const choice = parseInt(p("Choose category by entering the number: "));
+    const selectedCategory = categories[choice - 1];
 
-    // Generate the choices string including the option to exit
-    const choices = allCategories
-      .map((category) => category._id)
-      .concat("Exit")
-      .join(" / ");
+    // Retrieve all products within the selected category
+    const productsInCategory = await ProductsModel.find({
+      category: selectedCategory.name,
+    });
 
-    // Use p-sync to capture user input
-    const categoryInput = p(`Choose a category (${choices}): `);
+    // Extract the names of these products
+    const productNames = productsInCategory.map((product) => product.name);
 
-    // Check if the user chose to exit
-    if (categoryInput === "Exit") {
-      return;
-    }
+    // Find all offers that contain any of these products
+    const offers = await OffersModel.find({
+      products: { $in: productNames }, // This line checks if any of the products in an offer belong to the selected category
+    });
 
-    // Validate if the input is one of the categories
-    if (
-      !allCategories.map((category) => category._id).includes(categoryInput)
-    ) {
-      console.log("Invalid category selected.");
-      return;
-    }
-
-    const offersContainingCategory = await OffersModel.aggregate([
-      {
-        $match: {
-          $or: [
-            { category: categoryInput },
-            { category: { $in: [categoryInput] } },
-          ],
-        },
-      },
-      {
-        $unwind: "$products",
-      },
-      {
-        $group: {
-          _id: "$_id",
-          price: { $first: "$price" },
-          active: { $first: "$active" },
-          products: { $push: "$products" },
-        },
-      },
-    ]);
-
-    if (offersContainingCategory.length === 0) {
-      console.log(`No offers found for category: ${categoryInput}`);
-      return;
-    }
-
-    offersContainingCategory.forEach((offer, index) => {
+    console.log(
+      `\nOffers containing product(s) in the "${selectedCategory.name}" category:\n`
+    );
+    offers.forEach((offer, index) => {
       console.log(
-        `Offer ${index + 1}:\nPrice: $${offer.price} \nActive: ${
-          offer.active ? "Yes" : "No"
-        }\nIncluded Products: ${offer.products.join(
+        `${index + 1}. \n - Products: ${offer.products.join(
           ", "
-        )}\n------------------------`
+        )} \n - Price: $${offer.price}, Active: ${offer.active ? "Yes" : "No"}`
       );
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error viewing offers by category:", error);
   }
 }
 
-export async function viewOffersBasedOnStock() {
-  // Function to view the number of offers based on the number of its products in stock
+// export async function offersFromCategory() {
+//   console.log("You have chosen to view offers based on Category.");
+
+//   try {
+//     const categories = await CategoriesModel.find();
+//     console.log(
+//       "You can choose to view products out of following categories:\n "
+//     );
+//     categories.forEach((category, index) => {
+//       console.log(`${index + 1}. ${category.name}`);
+//     });
+//     console.log("\n");
+//     const choice = parseInt(p("Choose category by entering the number: "));
+//     const selectedCategory = categories[choice - 1];
+
+//     const offers = await OffersModel.find({
+//       category: selectedCategory.name,
+//     });
+//     console.log(`\nProducts in category "${selectedCategory.name}":\n`);
+//     offers.forEach((offer, index) => {
+//       console.log(
+//         `${index + 1}. ${offer.products} - Price: $${offer.price}, Active: ${
+//           offer.active
+//         }`
+//       );
+//     });
+//   } catch (error) {
+//     console.error("Error viewing offers by category:", error);
+//   }
+// }
+
+export async function viewordersBasedOnStock() {
+  // Function to view the number of orders based on the number of its products in stock
 }
 
 export async function createOrderForProducts() {
   console.log("Create order for products");
-  let productName = p("Enter the product name: ");
-  let quantity = p("Enter the quantity: ");
-  let additionalDetail = p("Enter additional detail: ");
+  const productName = p("Enter the product name: ");
+  const quantity = parseInt(p("Enter the quantity: "), 10);
+  const additionalDetail = p("Enter additional detail: ");
 
-  let product = await OrdersModel.findOne({
-    name: { $regex: new RegExp(productName, "i") },
-  });
-  console.log(
-    `Product: ${productName},
-     Quantity: ${quantity}, 
-     Additional Detail: ${additionalDetail}`
-  );
+  try {
+    // Find the product by name with sufficient stock
+    let productToOrder = await ProductsModel.findOne({
+      name: { $regex: new RegExp(productName, "i") },
+      stock: { $gte: quantity },
+    });
+
+    if (!productToOrder || productToOrder.stock < quantity) {
+      console.log(
+        `${productName} is out of stock or does not have enough stock!`
+      );
+      return;
+    }
+
+    // Create a new SalesOrder document
+    const newProductOrder = new OrdersModel({
+      product: productToOrder.toObject(), // Assuming you're embedding the whole product
+      quantity: quantity,
+      status: "pending", // Providing a value for the required 'status' field
+      additional_detail: additionalDetail,
+      total_price: productToOrder.price * quantity, // Example calculation for total price
+      total_cost: productToOrder.cost * quantity, // Example calculation for total cost
+    });
+
+    // Save the new SalesOrder document to the database
+    await newProductOrder.save();
+
+    // Reduce the stock of the ordered product
+    await ProductsModel.updateOne(
+      { _id: productToOrder._id },
+      { $inc: { stock: -quantity } }
+    );
+
+    console.log(`Order for ${productName} created successfully!`);
+  } catch (error) {
+    console.error("Error creating order for products:", error);
+  }
+  // let product = await OrdersModel.findOne({
+  //   name: { $regex: new RegExp(productName, "i") },
+  // });
+  // console.log(
+  //   `Product: ${productName},
+  //    Quantity: ${quantity},
+  //    Additional Detail: ${additionalDetail}`
+  // );
   // Function to create order for individual products
 }
 
+// // Function to create order for offers
 export async function createOrderForOffers() {
-  // Function to create order for offers
+  try {
+    const offers = await OffersModel.find({ active: true });
+    console.log("Available Offers: \n");
+    offers.forEach((offer, index) => {
+      console.log(
+        `${index + 1}. Offer: \n - Products: ${offer.products} \n - Price: $${
+          offer.price
+        } \n`
+      );
+    });
+
+    const selectedIndex =
+      parseInt(p("Enter the index of the offer to include in the order: ")) - 1;
+
+    if (
+      isNaN(selectedIndex) ||
+      selectedIndex < 0 ||
+      selectedIndex >= offers.length
+    ) {
+      console.log("Invalid offer index.");
+      return;
+    }
+
+    const selectedOffer = offers[selectedIndex];
+
+    const quantity = parseInt(
+      p(`Enter the quantity of Offer ${selectedOffer.offer} to order: `)
+    );
+    if (isNaN(quantity) || quantity <= 0) {
+      console.log(`Invalid quantity for Offer ${selectedOffer.offer}.`);
+      return;
+    }
+
+    const newOrder = new OrdersModel({
+      offer: selectedOffer.offer,
+      quantity,
+      status: "pending",
+    });
+    await newOrder.save();
+
+    console.log(`Order created successfully for Offer ${selectedOffer.offer}.`);
+  } catch (error) {
+    console.error("Error creating order for offers:", error);
+  }
 }
 
 export async function shipOrders() {
   // Function to ship orders
 }
 
+// Function to add new supplier
 export async function addNewSupplier() {
-  // Function to add new supplier
+  try {
+    console.log("Add new supplier");
+    const name = p("Enter name of new supplier: ");
+    const contactName = p("Enter new contact name: ");
+    const contactEmail = p("Enter new supplier email: ");
+
+    const newSupplier = new SuppliersModel({
+      name: name,
+      contact: {
+        name: contactName,
+        email: contactEmail,
+      },
+    });
+
+    await newSupplier.save();
+    console.log(` \n Supplier "${name}" was added!`);
+  } catch (error) {
+    console.error("Error adding new supplier:", error);
+  }
 }
 
 export async function viewAllSuppliers() {
@@ -255,31 +361,35 @@ export async function viewSumOfProfits() {
   console.log("View sum of all profits");
 
   let choice = p(
-    "Enter 'all' to view all offers\nor 'product' to view offers for a specific product: "
+    "Enter 'all' to view all orders\nor 'product' to view orders for a specific product: "
   );
 
-  let offers;
-  let productName; // Declare productName here
+  let orders;
+  let productName;
 
   if (choice.toLowerCase() === "product") {
-    productName = p("Enter the name of the product: "); // Don't redeclare productName, just assign the value
-    offers = await OffersModel.find({
+    productName = p("Enter the name of the product: ");
+    orders = await OrdersModel.find({
       products: {
         $in: [productName],
       },
     });
   } else {
-    offers = await OffersModel.find();
+    orders = await OrdersModel.find();
   }
 
   let totalProfit = 0;
-  offers.forEach((offer) => {
-    totalProfit += offer.price;
+  orders.forEach((order) => {
+    let profit = order.price;
+    if (order.products.length > 10) {
+      profit *= 0.9; // Apply 10% tax
+    }
+    totalProfit += profit;
   });
 
   if (choice.toLowerCase() === "product") {
     console.log(
-      `Total profit from offers containing ${productName}: ${totalProfit}`
+      `Total profit from orders containing ${productName}: ${totalProfit}`
     );
   } else {
     console.log(`Total profit: ${totalProfit}`);

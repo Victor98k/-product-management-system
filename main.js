@@ -5,9 +5,11 @@ import {
   viewProductsByCategory,
   offersFromCategory,
   addNewProduct,
+  addNewSupplier,
   viewProductsBySupplier,
   viewAllOffersInPriceRange,
   createOrderForProducts,
+  createOrderForOffers,
   viewAllSuppliers,
   viewSumOfProfits,
 } from "./functions.js";
