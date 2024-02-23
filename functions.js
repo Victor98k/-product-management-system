@@ -116,7 +116,7 @@ export async function viewProductsBySupplier() {
 export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   console.log("View all orders within a price range");
 
-  const orders = await ordersModel.find({
+  const orders = await OffersModel.find({
     price: {
       $gte: lowerLimit,
       $lte: upperLimit,
@@ -127,8 +127,8 @@ export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   );
   orders.forEach((offer) => {
     console.log(
-      ` Products: ${offer.products.join(", ")},  
-        Price: ${offer.price}, Active: ${offer.active}`
+      ` \nProducts: ${offer.products.join(", ")},  
+        \nPrice: ${offer.price}, \nActive: ${offer.active} \n`
     );
   });
 }
@@ -140,7 +140,7 @@ export async function offersFromCategory() {
   try {
     const categories = await CategoriesModel.find();
     console.log(
-      "You can choose to view products out of following categories:\n "
+      "You can choose to view offers out of following categories:\n "
     );
     categories.forEach((category, index) => {
       console.log(`${index + 1}. ${category.name}`);
@@ -167,9 +167,9 @@ export async function offersFromCategory() {
     );
     offers.forEach((offer, index) => {
       console.log(
-        `${index + 1}. \n - Products: ${offer.products.join(
-          ", "
-        )} \n - Price: $${offer.price}, Active: ${offer.active ? "Yes" : "No"}`
+        `${index + 1}. Products: ${offer.products.join(", ")} \n - Price: $${
+          offer.price
+        }, Active: ${offer.active ? "Yes" : "No"} \n`
       );
     });
   } catch (error) {
@@ -308,16 +308,18 @@ export async function createOrderForOffers() {
     });
     await newOrder.save();
 
-    console.log(`Order created successfully for Offer ${selectedOffer.offer}.`);
+    console.log(`Order created successfully for ${selectedOffer.offer}.`);
   } catch (error) {
-    console.error("Error creating order for offers:", error);
+    console.error("Error creating order for :", error);
   }
 }
 // Function to ship orders
 export async function shipOrders() {
-  const response = p("Has the product been shipped? (Type 'yes' for Yes, any other answer for No): ");
+  const response = p(
+    "Has the product been shipped? (Type 'yes' for Yes, any other answer for No): "
+  );
 
-  if (response.toLowerCase() === 'ja') {
+  if (response.toLowerCase() === "ja") {
     console.log("The product has been shipped.");
   } else {
     console.log("The product has not been shipped.");
@@ -351,11 +353,10 @@ export async function viewAllSuppliers() {
   // Function to view all suppliers
   console.log("View all suppliers");
   const suppliers = await SuppliersModel.find();
-  console.log("All suppliers");
+  console.log("All suppliers: \n");
   suppliers.forEach((supplier) => {
     console.log(
-      `Name: ${supplier.name}, 
-      Contact: ${supplier.contact.name}`
+      `Name: ${supplier.name}, \nContact: ${supplier.contact.name}, \nEmail: ${supplier.contact.email} \n`
     );
   });
 }
@@ -370,7 +371,13 @@ export async function viewAllSales() {
     }
 
     salesOrders.forEach((order, index) => {
-      console.log(`Order Number: ${order.orderNumber || 'N/A'}, Date: ${order.date || 'N/A'}, Status: ${order.status || 'N/A'}, Total Cost: ${order.totalCost || 'N/A'}`);
+      console.log(
+        `Order Number: ${order.orderNumber}, Date: ${
+          order.date || "N/A"
+        }, Status: ${order.status || "N/A"}, Total Cost: ${
+          order.totalCost || "N/A"
+        }`
+      );
     });
   } catch (error) {
     console.error("An error occurred while fetching sales orders:", error);
@@ -416,4 +423,3 @@ export async function viewSumOfProfits() {
     console.log(`Total profit: ${totalProfit}`);
   }
 }
-
