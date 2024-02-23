@@ -1484,18 +1484,21 @@ export const sampleOrders = [
 
 export const sampleOffers = [
   {
+    offer: "Offer 1",
     products: ["Laptop", "Smartphone"],
     price: 1800,
     active: true,
     category: ["Electronics"],
   },
   {
+    offer: "Offer 2",
     products: ["T-shirt", "Shampoo"],
     price: 30,
     active: true,
     category: ["Clothing", "Beauty & Personal Care"],
   },
   {
+    offer: "Offer 3",
     products: ["Refrigerator", "Smartphone", "Soccer Ball"],
     price: 1830,
     active: false,
