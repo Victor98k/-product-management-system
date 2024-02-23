@@ -615,72 +615,64 @@ export async function viewAllSales() {
 }
 
 export async function viewSumOfProfits() {
-  // Function to view the sum of all profits
   console.log("View sum of all profits");
-  console.log(
-    "Type 1 to view the sum of all profits, or type 2 to choose a specefic product:"
-  );
+  console.log("Type 1 to view the sum of all profits");
 
   let choice = p("Make a choice by entering a number: ");
+  let taxRate = 0.2;
 
   switch (choice) {
     case "1":
       console.clear();
       console.log("Sum of all profits");
-      await OrdersModel.find();
-      console.log;
+
+      try {
+        // Fetch all offers from the database
+        let allOffers = await OffersModel.find({ active: true });
+
+        // Calculate total profit for all products in all offers
+        let totalProfit = 0;
+        allOffers.forEach((offer) => {
+          offer.offerProducts.forEach((product) => {
+            let profit = product.price - product.cost;
+            console.log(`Profit for ${product.name}: ${profit}`);
+            totalProfit += profit;
+          });
+        });
+
+        // Apply tax rate
+        totalProfit = totalProfit * (1 - taxRate);
+
+        console.log(`Total Profit: ${totalProfit}`);
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      }
+
       break;
 
     case "2":
       console.clear();
       let productName = p("Enter the name of the product: ");
-
-      productName = OrdersModel.find({ products: productName });
-
-      let totalProfit = 0;
-      productName.forEach((productName) => {
-        productName.products.forEach((product) => {
-          if (
-            choice.toLowerCase() === "2" &&
-            product.products !== productName
-          ) {
-            return;
+      let specificOffers = await OffersModel.find({
+        "offerProducts.name": productName,
+        active: true,
+      });
+      let specificProfit = 0;
+      specificOffers.forEach((offer) => {
+        offer.offerProducts.forEach((product) => {
+          if (product.name === productName) {
+            let profit = (product.price - product.cost) * product.quantity;
+            console.log(`Profit: ${profit}`);
+            specificProfit += profit;
           }
-          // Calculate the profit from this product
-          let profit = (product.price - product.cost) * product.quantity;
-          totalProfit += profit;
         });
       });
+      specificProfit = specificProfit * (1 - taxRate); // Exclude tax
+      console.log(`Total Profit for ${productName}: ${specificProfit}`);
+      break;
+
+    default:
+      console.log("Invalid choice. Please enter 1 or 2.");
+      break;
   }
-
-  // if (choice.toLowerCase() === "product") {
-  //   orders = await OrdersModel.find({
-  //     products: {
-  //       $in: [OffersModel.find({ products: productName })],
-  //     },
-  //   });
-  // } else {
-  //   orders = await OffersModel.find();
-  // }
-
-  // let totalProfit = 0;
-  // orders.forEach((order) => {
-  //   order.products.forEach((product) => {
-  //     if (
-  //       choice.toLowerCase() === "product" &&
-  //       product.products !== productName
-  //     ) {
-  //       return;
-  //     }
-  //     // Calculate the profit from this product
-  //     let profit = (product.price - product.cost) * product.quantity;
-  //     totalProfit += profit;
-  //   });
-  // });
-
-  // if (choice.toLowerCase() === "product") {
-  //   console.log(`Total profit from sales of ${offer}: ${totalProfit}`);
-  // } else {
-  //   console.log(`Total profit from all sales: ${totalProfit}`);
-  // }
 }
