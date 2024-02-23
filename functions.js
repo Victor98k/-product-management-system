@@ -617,6 +617,7 @@ export async function viewAllSales() {
 export async function viewSumOfProfits() {
   console.log("View sum of all profits");
   console.log("Type 1 to view the sum of all profits");
+  console.log("Type 2 to view the sum of profits for a specific product");
 
   let choice = p("Make a choice by entering a number: ");
   let taxRate = 0.2;
@@ -627,10 +628,8 @@ export async function viewSumOfProfits() {
       console.log("Sum of all profits");
 
       try {
-        // Fetch all offers from the database
         let allOffers = await OffersModel.find({ active: true });
 
-        // Calculate total profit for all products in all offers
         let totalProfit = 0;
         allOffers.forEach((offer) => {
           offer.offerProducts.forEach((product) => {
@@ -640,16 +639,15 @@ export async function viewSumOfProfits() {
           });
         });
 
-        // Apply tax rate
+        // KOLLA PÅ TAX SKITEN NU DRAS D AV PÅ TOTAL PROFIT
         totalProfit = totalProfit * (1 - taxRate);
 
-        console.log(`Total Profit: ${totalProfit}`);
+        console.log(`Total Profit: ${totalProfit} kr`);
       } catch (error) {
         console.error("Error fetching offers:", error);
       }
 
       break;
-
     case "2":
       console.clear();
       let productName = p("Enter the name of the product: ");
@@ -657,22 +655,35 @@ export async function viewSumOfProfits() {
         "offerProducts.name": productName,
         active: true,
       });
-      let specificProfit = 0;
-      specificOffers.forEach((offer) => {
-        offer.offerProducts.forEach((product) => {
-          if (product.name === productName) {
-            let profit = (product.price - product.cost) * product.quantity;
-            console.log(`Profit: ${profit}`);
-            specificProfit += profit;
-          }
-        });
-      });
-      specificProfit = specificProfit * (1 - taxRate); // Exclude tax
-      console.log(`Total Profit for ${productName}: ${specificProfit}`);
-      break;
 
-    default:
-      console.log("Invalid choice. Please enter 1 or 2.");
+      if (specificOffers.length > 0) {
+        let specificProfit = 0;
+
+        specificOffers.forEach((offer) => {
+          offer.offerProducts.forEach((product) => {
+            // Check if product.quantity is a valid number, if not, set it to 1
+            let quantity = !isNaN(product.quantity) ? product.quantity : 1;
+
+            if (product.name === productName) {
+              let profit = (product.price - product.cost) * quantity;
+              console.log(
+                `Profit for ${productName} in ${offer.offer}: ${profit}`
+              );
+              specificProfit += profit;
+            }
+          });
+        });
+
+        // KOLLA TAX SKITEN NU
+        // Apply tax rate
+        specificProfit = specificProfit * (1 - taxRate);
+
+        console.log(
+          `Total Profit for ${productName} after taxes : ${specificProfit}kr`
+        );
+      } else {
+        console.log(`No offers found for product: ${productName}`);
+      }
       break;
   }
 }
