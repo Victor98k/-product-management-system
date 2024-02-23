@@ -116,7 +116,7 @@ export async function viewProductsBySupplier() {
 export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   console.log("View all orders within a price range");
 
-  const orders = await ordersModel.find({
+  const orders = await OrdersModel.find({
     price: {
       $gte: lowerLimit,
       $lte: upperLimit,
@@ -270,22 +270,26 @@ export async function viewSumOfProfits() {
 
   if (choice.toLowerCase() === "product") {
     productName = p("Enter the name of the product: ");
-    orders = await SalesOrdersSchema.find({
+    orders = await OrdersModel.find({
       products: {
         $in: [productName],
       },
     });
   } else {
-    orders = await SalesOrdersSchema.find();
+    orders = await OrdersModel.find();
   }
 
   let totalProfit = 0;
   orders.forEach((order) => {
-    let profit = order.price;
-    if (order.products.length > 10) {
-      profit *= 0.9; // Apply 10% tax
+    if (order.products) {
+      let profit = order.price;
+      if (order.products.length > 10) {
+        profit *= 0.9; // Apply 10% tax
+      }
+      totalProfit += profit;
+    } else {
+      console.log("An order without products was found.");
     }
-    totalProfit += profit;
   });
 
   if (choice.toLowerCase() === "product") {
