@@ -294,33 +294,37 @@ export async function viewProductsByCategory() {
 
 // Function to view products by supplier
 export async function viewProductsBySupplier() {
-  console.log("You have chosen to view products based on supplier.");
-
   try {
-    const supplier = await SuppliersModel.find();
-    console.log(
-      "You can choose to view products from the following suppliers:\n "
-    );
-    supplier.forEach((supplier, index) => {
-      console.log(`${index + 1}. ${supplier}`);
-    });
-    console.log("\n");
-    const choice = parseInt(p("Choose supplier by entering a number: "));
-    const selectedSupplier = supplier[choice - 1];
+    const suppliers = await SuppliersModel.find();
+    if (suppliers.length === 0) {
+      console.log("There are no suppliers to display.");
+      return;
+    }
 
-    const products = await ProductsModel.find({
-      supplier: selectedSupplier.name,
+    suppliers.forEach((supplier, index) => {
+      console.log(`${index + 1}: Supplier Name: ${supplier.name}`);
     });
-    console.log(`\nProducts of Supplier "${selectedSupplier.name}":\n`);
-    products.forEach((product, index) => {
-      console.log(
-        `${index + 1}. ${product.name} - Price: $${product.price}, Stock: ${
-          product.stock
-        }`
-      );
+
+    const supplierIndex = parseInt(p("Choose a supplier by entering its number: ")) - 1;
+    const selectedSupplier = suppliers[supplierIndex];
+
+    if (!selectedSupplier) {
+      console.log("Invalid supplier selection.");
+      return;
+    }
+
+    const products = await ProductsModel.find({ 'supplier.name': selectedSupplier.name });
+    if (products.length === 0) {
+      console.log(`No products found for supplier: ${selectedSupplier.name}`);
+      return;
+    }
+
+    console.log(`Products provided by ${selectedSupplier.name}:`);
+    products.forEach((product) => {
+      console.log(`Name: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`);
     });
   } catch (error) {
-    console.error("Error viewing products by supplier:", error);
+    console.error("An error occurred while viewing products by supplier:", error);
   }
 }
 
@@ -420,8 +424,48 @@ export async function offersFromCategory() {
 //   }
 // }
 
+
+
+
+// Function to view the number of orders based on the number of its products in stock
 export async function viewordersBasedOnStock() {
-  // Function to view the number of orders based on the number of its products in stock
+  try {
+    const offers = await OffersModel.find();
+    let offersDetails = await Promise.all(offers.map(async (offer) => {
+      let totalStock = 0;
+      let productsDetails = [];
+      for (const productName of offer.products) {
+        const product = await ProductsModel.findOne({ name: productName });
+        if (product) {
+          totalStock += product.stock;
+          productsDetails.push({ name: product.name, price: product.price, cost: product.cost, stock: product.stock });
+        }
+      }
+      return {
+        offerName: offer.offerName, 
+        totalStock: offer.active ? totalStock : undefined, 
+        products: productsDetails,
+        active: offer.active
+      };
+    }));
+
+    offersDetails.sort((a, b) => {
+      if (!a.active) return 1;
+      if (!b.active) return -1;
+      return b.totalStock - a.totalStock;
+    });
+
+    offersDetails.forEach((offer, index) => {
+      console.log(`${index + 1}. Offer: ${offer.offerName || 'No name available'}, Total in Stock: ${offer.active ? offer.totalStock : 'Inactive'}`);
+      if (offer.active) { 
+        offer.products.forEach(product => {
+          console.log(`  Product: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`);
+        });
+      }
+    });
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 }
 
 export async function createOrderForProducts() {
@@ -545,6 +589,44 @@ export async function createOrderForOffers() {
 
 // Function to ship orders
 export async function shipOrders() {
+
+  try {
+    const orders = await OrdersModel.find({ status: { $ne: 'Shipped' } });
+    if (orders.length === 0) {
+      console.log("There are no orders to display.");
+      return;
+    }
+
+    orders.forEach((order, index) => {
+      console.log(`${index + 1}: Order ID: ${order._id}, Status: ${order.status}`);
+    });
+
+    const orderIndex = parseInt(p("Choose an order by entering its number: ")) - 1;
+    const selectedOrder = orders[orderIndex];
+
+    if (!selectedOrder) {
+      console.log("Invalid order selection.");
+      return;
+    }
+
+    const action = p("Enter 'ship' to ship the order, or 'back' to go back: ").toLowerCase();
+
+    if (action === 'ship') {
+      await OrdersModel.updateOne({ _id: selectedOrder._id }, { $set: { status: 'Shipped' } });
+
+      if (selectedOrder.product && selectedOrder.quantity) {
+        await ProductsModel.updateOne({ _id: selectedOrder.product }, { $inc: { stock: -selectedOrder.quantity } });
+      }
+
+      console.log(`Order ID: ${selectedOrder._id} has been marked as Shipped and stock quantities updated.`);
+    } else if (action === 'back') {
+      console.log("Going back to the previous menu...");
+    } else {
+      console.log("Invalid action.");
+    }
+  } catch (error) {
+    console.error("An error occurred:", error);
+
   const response = p(
     "Has the product been shipped? (Type 'yes' for Yes, any other answer for No): "
   );
@@ -553,6 +635,7 @@ export async function shipOrders() {
     console.log("The product has been shipped.");
   } else {
     console.log("The product has not been shipped.");
+
   }
 }
 
@@ -594,23 +677,25 @@ export async function viewAllSuppliers() {
 export async function viewAllSales() {
   try {
     const salesOrders = await OrdersModel.find();
-
     if (salesOrders.length === 0) {
       console.log("There are no sales orders to display.");
       return;
     }
 
-    salesOrders.forEach((order, index) => {
-      console.log(
-        `Order Number: ${order.orderNumber}, Date: ${
-          order.date || "N/A"
-        }, Status: ${order.status || "N/A"}, Total Cost: ${
-          order.totalCost || "N/A"
-        }`
-      );
-    });
+    salesOrders.forEach((order) => {
+      console.log(`Order ID: ${order._id}, Status: ${order.status}, Total Cost: ${order.total_cost}`);
+
+    
+
+    console.log("Enter 'back' to return to the main menu.");
+    const action = p("Your choice: ").toLowerCase();
+    if (action === 'back') {
+      console.log("Returning to the main menu...");
+    } else {
+      console.log("Invalid action. Returning to the main menu...");
+    }
   } catch (error) {
-    console.error("An error occurred while fetching sales orders:", error);
+    console.error("An error occurred while viewing all sales:", error);
   }
 }
 
@@ -687,3 +772,4 @@ export async function viewSumOfProfits() {
       break;
   }
 }
+
