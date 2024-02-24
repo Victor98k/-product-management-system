@@ -8,6 +8,7 @@ import {
   addNewSupplier,
   viewProductsBySupplier,
   viewAllOffersInPriceRange,
+  viewordersBasedOnStock,
   createOrderForProducts,
   createOrderForOffers,
   shipOrders,
@@ -108,7 +109,7 @@ const main = async () => {
         break;
       case "7":
         console.clear();
-        await viewOffersBasedOnStock();
+        await viewordersBasedOnStock();
         break;
       case "8":
         console.clear();
