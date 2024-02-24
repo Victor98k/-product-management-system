@@ -498,3 +498,4 @@ export async function viewSumOfProfits() {
   }
 }
 
+//Hej hej
