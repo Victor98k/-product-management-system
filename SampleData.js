@@ -1504,6 +1504,37 @@ export const sampleOffers = [
     active: false,
     category: ["Home Appliances", "Electronics", "Sports & Outdoors"],
   },
+  {
+    offer: "Offer 4",
+    products: ["Laptop", "Mouse"],
+    offerProducts: [
+      {
+        name: "Laptop",
+        category: "Electronics",
+        price: 1000,
+        cost: 800,
+        stock: 50,
+        supplier: {
+          name: "Supplier A",
+          contact: { name: "Contact A", email: "contacta@example.com" },
+        },
+      },
+      {
+        name: "Mouse",
+        category: "Electronics",
+        price: 100,
+        cost: 50,
+        stock: 150,
+        supplier: {
+          name: "Supplier B",
+          contact: { name: "Contact B", email: "contactb@example.com" },
+        },
+      },
+    ],
+    price: 1050, // Total price for the offer
+    active: true,
+    category: ["Electronics"],
+  },
 ];
 
 export const sampleCategories = [
