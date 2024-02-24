@@ -1485,27 +1485,6 @@ export const sampleOrders = [
 export const sampleOffers = [
   {
     offer: "Offer 1",
-    products: ["Laptop", "Smartphone"],
-    price: 1800,
-    active: true,
-    category: ["Electronics"],
-  },
-  {
-    offer: "Offer 2",
-    products: ["T-shirt", "Shampoo"],
-    price: 30,
-    active: true,
-    category: ["Clothing", "Beauty & Personal Care"],
-  },
-  {
-    offer: "Offer 3",
-    products: ["Refrigerator", "Smartphone", "Soccer Ball"],
-    price: 1830,
-    active: false,
-    category: ["Home Appliances", "Electronics", "Sports & Outdoors"],
-  },
-  {
-    offer: "Offer 4",
     products: ["Laptop", "Mouse"],
     offerProducts: [
       {
@@ -1534,6 +1513,219 @@ export const sampleOffers = [
     price: 1050, // Total price for the offer
     active: true,
     category: ["Electronics"],
+  },
+  {
+    offer: "Offer 2",
+    products: ["Smartphone", "Bluetooth Speaker"],
+    offerProducts: [
+      {
+        name: "Smartphone",
+        category: "Electronics",
+        price: 800,
+        cost: 600,
+        stock: 40,
+        supplier: {
+          name: "Electronics Supplier Inc.",
+          contact: {
+            name: "John Doe",
+            email: "john@electronicsupplier.com",
+          },
+        },
+      },
+      {
+        name: "Bluetooth Speaker",
+        category: "Electronics",
+        price: 80,
+        cost: 50,
+        stock: 70,
+        supplier: {
+          name: "Electronics Supplier Inc.",
+          contact: {
+            name: "John Doe",
+            email: "john@electronicsupplier.com",
+          },
+        },
+      },
+    ],
+    price: 880,
+    active: true,
+    category: ["Electronics"],
+  },
+  {
+    offer: "Offer 3",
+    products: ["T-shirt", "Jeans", "Sweater"],
+    offerProducts: [
+      {
+        name: "T-shirt",
+        category: "Clothing",
+        price: 20,
+        cost: 10,
+        stock: 100,
+        supplier: {
+          name: "Entersport Active Co.",
+          contact: {
+            name: "Thomas Thomzel",
+            email: "Thomas@eactive.com",
+          },
+        },
+      },
+      {
+        name: "Jeans",
+        category: "Clothing",
+        price: 50,
+        cost: 25,
+        stock: 100,
+        supplier: {
+          name: "Entersport Active Co.",
+          contact: {
+            name: "Thomas Thomzel",
+            email: "Thomas@eactive.com",
+          },
+        },
+      },
+      {
+        name: "Sweater",
+        category: "Clothing",
+        price: 40,
+        cost: 20,
+        stock: 60,
+        supplier: {
+          name: "Entersport Active Co.",
+          contact: {
+            name: "Thomas Thomzel",
+            email: "Thomas@eactive.com",
+          },
+        },
+      },
+    ],
+    price: 110,
+    active: true,
+    category: ["Clothing"],
+  },
+  {
+    offer: "Offer 4",
+    products: ["Refrigerator", "Microwave Oven"],
+    offerProducts: [
+      {
+        name: "Refrigerator",
+        category: "Home Appliances",
+        price: 1200,
+        cost: 1000,
+        stock: 30,
+        supplier: {
+          name: "Arlos Whitewash and Cleaning Inc.",
+          contact: {
+            name: "Jasmine Greenland",
+            email: "greenlandjasmine@arlos.com",
+          },
+        },
+      },
+      {
+        name: "Microwave Oven",
+        category: "Home Appliances",
+        price: 150,
+        cost: 100,
+        stock: 40,
+        supplier: {
+          name: "Arlos Whitewash and Cleaning Inc.",
+          contact: {
+            name: "Jasmine Greenland",
+            email: "greenlandjasmine@arlos.com",
+          },
+        },
+      },
+    ],
+    price: 1350,
+    active: true,
+    category: ["Home Appliances"],
+  },
+  {
+    offer: "Offer 5",
+    products: ["Shampoo", "Conditioner", "Face Moisturizer"],
+    offerProducts: [
+      {
+        name: "Shampoo",
+        category: "Beauty & Personal Care",
+        price: 10,
+        cost: 5,
+        stock: 80,
+        supplier: {
+          name: "Fashion Supplier Co.",
+          contact: {
+            name: "Jane Smith",
+            email: "jane@fashionsupplier.com",
+          },
+        },
+      },
+      {
+        name: "Conditioner",
+        category: "Beauty & Personal Care",
+        price: 15,
+        cost: 8,
+        stock: 70,
+        supplier: {
+          name: "Fashion Supplier Co.",
+          contact: {
+            name: "Jane Smith",
+            email: "jane@fashionsupplier.com",
+          },
+        },
+      },
+      {
+        name: "Face Moisturizer",
+        category: "Beauty & Personal Care",
+        price: 20,
+        cost: 12,
+        stock: 90,
+        supplier: {
+          name: "Fashion Supplier Co.",
+          contact: {
+            name: "Jane Smith",
+            email: "jane@fashionsupplier.com",
+          },
+        },
+      },
+    ],
+    price: 45,
+    active: true,
+    category: ["Beauty & Personal Care"],
+  },
+  {
+    offer: "Offer 6",
+    products: ["Camping Tent", "Hiking Backpack"],
+    offerProducts: [
+      {
+        name: "Camping Tent",
+        category: "Sports & Outdoors",
+        price: 100,
+        cost: 80,
+        stock: 20,
+        supplier: {
+          name: "Carlos Sports and Hiking Co.",
+          contact: {
+            name: "Carlos Di Amenni",
+            email: "carlos78@sportsandhiking.com",
+          },
+        },
+      },
+      {
+        name: "Hiking Backpack",
+        category: "Sports & Outdoors",
+        price: 80,
+        cost: 60,
+        stock: 40,
+        supplier: {
+          name: "Carlos Sports and Hiking Co.",
+          contact: {
+            name: "Carlos Di Amenni",
+            email: "carlos78@sportsandhiking.com",
+          },
+        },
+      },
+    ],
+    price: 180,
+    active: true,
+    category: ["Sports & Outdoors"],
   },
 ];
 

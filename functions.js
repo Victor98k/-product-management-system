@@ -401,37 +401,6 @@ export async function offersFromCategory() {
   }
 }
 
-// export async function offersFromCategory() {
-//   console.log("You have chosen to view offers based on Category.");
-
-//   try {
-//     const categories = await CategoriesModel.find();
-//     console.log(
-//       "You can choose to view products out of following categories:\n "
-//     );
-//     categories.forEach((category, index) => {
-//       console.log(`${index + 1}. ${category.name}`);
-//     });
-//     console.log("\n");
-//     const choice = parseInt(p("Choose category by entering the number: "));
-//     const selectedCategory = categories[choice - 1];
-
-//     const offers = await OffersModel.find({
-//       category: selectedCategory.name,
-//     });
-//     console.log(`\nProducts in category "${selectedCategory.name}":\n`);
-//     offers.forEach((offer, index) => {
-//       console.log(
-//         `${index + 1}. ${offer.products} - Price: $${offer.price}, Active: ${
-//           offer.active
-//         }`
-//       );
-//     });
-//   } catch (error) {
-//     console.error("Error viewing offers by category:", error);
-//   }
-// }
-
 // Function to view the number of orders based on the number of its products in stock
 export async function viewordersBasedOnStock() {
   try {
@@ -606,7 +575,6 @@ export async function createOrderForOffers() {
 }
 
 // Function to ship orders
-// Function to ship orders
 export async function shipOrders() {
   try {
     const orders = await OrdersModel.find({ status: { $ne: "Shipped" } });
@@ -717,7 +685,7 @@ export async function viewAllSales() {
 
     salesOrders.forEach((order) => {
       console.log(
-        `Order ID: ${order._id}, Status: ${order.status}, Total Cost: ${order.total_cost}`
+        `Order ID: ${order._id}, Status: ${order.status}, Total Cost: ${order.total_price}`
       );
     }); // This is where the missing bracket was needed
 
