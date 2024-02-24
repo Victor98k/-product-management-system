@@ -305,7 +305,8 @@ export async function viewProductsBySupplier() {
       console.log(`${index + 1}: Supplier Name: ${supplier.name}`);
     });
 
-    const supplierIndex = parseInt(p("Choose a supplier by entering its number: ")) - 1;
+    const supplierIndex =
+      parseInt(p("Choose a supplier by entering its number: ")) - 1;
     const selectedSupplier = suppliers[supplierIndex];
 
     if (!selectedSupplier) {
@@ -313,7 +314,9 @@ export async function viewProductsBySupplier() {
       return;
     }
 
-    const products = await ProductsModel.find({ 'supplier.name': selectedSupplier.name });
+    const products = await ProductsModel.find({
+      "supplier.name": selectedSupplier.name,
+    });
     if (products.length === 0) {
       console.log(`No products found for supplier: ${selectedSupplier.name}`);
       return;
@@ -321,10 +324,15 @@ export async function viewProductsBySupplier() {
 
     console.log(`Products provided by ${selectedSupplier.name}:`);
     products.forEach((product) => {
-      console.log(`Name: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`);
+      console.log(
+        `Name: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`
+      );
     });
   } catch (error) {
-    console.error("An error occurred while viewing products by supplier:", error);
+    console.error(
+      "An error occurred while viewing products by supplier:",
+      error
+    );
   }
 }
 
@@ -393,61 +401,34 @@ export async function offersFromCategory() {
   }
 }
 
-// export async function offersFromCategory() {
-//   console.log("You have chosen to view offers based on Category.");
-
-//   try {
-//     const categories = await CategoriesModel.find();
-//     console.log(
-//       "You can choose to view products out of following categories:\n "
-//     );
-//     categories.forEach((category, index) => {
-//       console.log(`${index + 1}. ${category.name}`);
-//     });
-//     console.log("\n");
-//     const choice = parseInt(p("Choose category by entering the number: "));
-//     const selectedCategory = categories[choice - 1];
-
-//     const offers = await OffersModel.find({
-//       category: selectedCategory.name,
-//     });
-//     console.log(`\nProducts in category "${selectedCategory.name}":\n`);
-//     offers.forEach((offer, index) => {
-//       console.log(
-//         `${index + 1}. ${offer.products} - Price: $${offer.price}, Active: ${
-//           offer.active
-//         }`
-//       );
-//     });
-//   } catch (error) {
-//     console.error("Error viewing offers by category:", error);
-//   }
-// }
-
-
-
-
 // Function to view the number of orders based on the number of its products in stock
 export async function viewordersBasedOnStock() {
   try {
     const offers = await OffersModel.find();
-    let offersDetails = await Promise.all(offers.map(async (offer) => {
-      let totalStock = 0;
-      let productsDetails = [];
-      for (const productName of offer.products) {
-        const product = await ProductsModel.findOne({ name: productName });
-        if (product) {
-          totalStock += product.stock;
-          productsDetails.push({ name: product.name, price: product.price, cost: product.cost, stock: product.stock });
+    let offersDetails = await Promise.all(
+      offers.map(async (offer) => {
+        let totalStock = 0;
+        let productsDetails = [];
+        for (const productName of offer.products) {
+          const product = await ProductsModel.findOne({ name: productName });
+          if (product) {
+            totalStock += product.stock;
+            productsDetails.push({
+              name: product.name,
+              price: product.price,
+              cost: product.cost,
+              stock: product.stock,
+            });
+          }
         }
-      }
-      return {
-        offerName: offer.offerName, 
-        totalStock: offer.active ? totalStock : undefined, 
-        products: productsDetails,
-        active: offer.active
-      };
-    }));
+        return {
+          offerName: offer.offerName,
+          totalStock: offer.active ? totalStock : undefined,
+          products: productsDetails,
+          active: offer.active,
+        };
+      })
+    );
 
     offersDetails.sort((a, b) => {
       if (!a.active) return 1;
@@ -456,10 +437,16 @@ export async function viewordersBasedOnStock() {
     });
 
     offersDetails.forEach((offer, index) => {
-      console.log(`${index + 1}. Offer: ${offer.offerName || 'No name available'}, Total in Stock: ${offer.active ? offer.totalStock : 'Inactive'}`);
-      if (offer.active) { 
-        offer.products.forEach(product => {
-          console.log(`  Product: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`);
+      console.log(
+        `${index + 1}. Offer: ${
+          offer.offerName || "No name available"
+        }, Total in Stock: ${offer.active ? offer.totalStock : "Inactive"}`
+      );
+      if (offer.active) {
+        offer.products.forEach((product) => {
+          console.log(
+            `  Product: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`
+          );
         });
       }
     });
@@ -589,19 +576,21 @@ export async function createOrderForOffers() {
 
 // Function to ship orders
 export async function shipOrders() {
-
   try {
-    const orders = await OrdersModel.find({ status: { $ne: 'Shipped' } });
+    const orders = await OrdersModel.find({ status: { $ne: "Shipped" } });
     if (orders.length === 0) {
       console.log("There are no orders to display.");
       return;
     }
 
     orders.forEach((order, index) => {
-      console.log(`${index + 1}: Order ID: ${order._id}, Status: ${order.status}`);
+      console.log(
+        `${index + 1}: Order ID: ${order._id}, Status: ${order.status}`
+      );
     });
 
-    const orderIndex = parseInt(p("Choose an order by entering its number: ")) - 1;
+    const orderIndex =
+      parseInt(p("Choose an order by entering its number: ")) - 1;
     const selectedOrder = orders[orderIndex];
 
     if (!selectedOrder) {
@@ -609,33 +598,45 @@ export async function shipOrders() {
       return;
     }
 
-    const action = p("Enter 'ship' to ship the order, or 'back' to go back: ").toLowerCase();
+    const action = p(
+      "Enter 'ship' to ship the order, or 'back' to go back: "
+    ).toLowerCase();
 
-    if (action === 'ship') {
-      await OrdersModel.updateOne({ _id: selectedOrder._id }, { $set: { status: 'Shipped' } });
+    if (action === "ship") {
+      await OrdersModel.updateOne(
+        { _id: selectedOrder._id },
+        { $set: { status: "Shipped" } }
+      );
 
       if (selectedOrder.product && selectedOrder.quantity) {
-        await ProductsModel.updateOne({ _id: selectedOrder.product }, { $inc: { stock: -selectedOrder.quantity } });
+        await ProductsModel.updateOne(
+          { _id: selectedOrder.product },
+          { $inc: { stock: -selectedOrder.quantity } }
+        );
       }
 
-      console.log(`Order ID: ${selectedOrder._id} has been marked as Shipped and stock quantities updated.`);
-    } else if (action === 'back') {
+      console.log(
+        `Order ID: ${selectedOrder._id} has been marked as Shipped and stock quantities updated.`
+      );
+    } else if (action === "back") {
       console.log("Going back to the previous menu...");
     } else {
       console.log("Invalid action.");
     }
   } catch (error) {
     console.error("An error occurred:", error);
+  } // This closing bracket was missing, causing the error
 
+  // This section was outside due to the missing bracket
   const response = p(
     "Has the product been shipped? (Type 'yes' for Yes, any other answer for No): "
   );
 
   if (response.toLowerCase() === "ja") {
+    // Note: You're checking for "ja" here. Did you mean "yes"?
     console.log("The product has been shipped.");
   } else {
     console.log("The product has not been shipped.");
-
   }
 }
 
@@ -683,13 +684,14 @@ export async function viewAllSales() {
     }
 
     salesOrders.forEach((order) => {
-      console.log(`Order ID: ${order._id}, Status: ${order.status}, Total Cost: ${order.total_cost}`);
-
-    
+      console.log(
+        `Order ID: ${order._id}, Status: ${order.status}, Total Cost: ${order.total_price}`
+      );
+    }); // This is where the missing bracket was needed
 
     console.log("Enter 'back' to return to the main menu.");
     const action = p("Your choice: ").toLowerCase();
-    if (action === 'back') {
+    if (action === "back") {
       console.log("Returning to the main menu...");
     } else {
       console.log("Invalid action. Returning to the main menu...");
@@ -711,7 +713,6 @@ export async function viewSumOfProfits() {
     case "1":
       console.clear();
       console.log("Sum of all profits");
-      
 
       try {
         let allOffers = await OffersModel.find({ active: true });
@@ -776,13 +777,10 @@ export async function viewSumOfProfits() {
 
 //Function to exit application in each other funtion
 export async function returnToMenu() {
-  let choice = p("Press M to return to the main menu or any other key to exit: ");
-  if (choice.toLowerCase() === 'm') {
+  let choice = p(
+    "Press M to return to the main menu or any other key to exit: "
+  );
+  if (choice.toLowerCase() === "m") {
     main();
   }
 }
-
-
-
-
-
