@@ -711,6 +711,7 @@ export async function viewSumOfProfits() {
     case "1":
       console.clear();
       console.log("Sum of all profits");
+      
 
       try {
         let allOffers = await OffersModel.find({ active: true });
@@ -772,4 +773,16 @@ export async function viewSumOfProfits() {
       break;
   }
 }
+
+//Function to exit application in each other funtion
+export async function returnToMenu() {
+  let choice = p("Press M to return to the main menu or any other key to exit: ");
+  if (choice.toLowerCase() === 'm') {
+    main();
+  }
+}
+
+
+
+
 
