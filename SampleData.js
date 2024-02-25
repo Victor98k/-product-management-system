@@ -1472,13 +1472,73 @@ export const sampleSuppliers = [
 export const sampleOrders = [
   {
     offer: "Offer 1",
-    quantity: 2,
-    status: "pending",
+    products: ["Laptop", "Mouse"],
+    offerProducts: [
+      {
+        name: "Laptop",
+        category: "Electronics",
+        price: 1000,
+        cost: 800,
+        stock: 50,
+        supplier: {
+          name: "Supplier A",
+          contact: { name: "Contact A", email: "contacta@example.com" },
+        },
+      },
+      {
+        name: "Mouse",
+        category: "Electronics",
+        price: 100,
+        cost: 50,
+        stock: 150,
+        supplier: {
+          name: "Supplier B",
+          contact: { name: "Contact B", email: "contactb@example.com" },
+        },
+      },
+    ],
+    price: 1050, // Total price for the offer
+    active: true,
+    status: "Pending",
+    category: ["Electronics"],
   },
   {
-    offer: "Offer 3",
-    quantity: 1,
-    status: "pending",
+    offer: "Offer 2",
+    products: ["Smartphone", "Bluetooth Speaker"],
+    offerProducts: [
+      {
+        name: "Smartphone",
+        category: "Electronics",
+        price: 800,
+        cost: 600,
+        stock: 40,
+        supplier: {
+          name: "Electronics Supplier Inc.",
+          contact: {
+            name: "John Doe",
+            email: "john@electronicsupplier.com",
+          },
+        },
+      },
+      {
+        name: "Bluetooth Speaker",
+        category: "Electronics",
+        price: 80,
+        cost: 50,
+        stock: 70,
+        supplier: {
+          name: "Electronics Supplier Inc.",
+          contact: {
+            name: "John Doe",
+            email: "john@electronicsupplier.com",
+          },
+        },
+      },
+    ],
+    price: 880,
+    active: true,
+    status: "Pending",
+    category: ["Electronics"],
   },
 ];
 

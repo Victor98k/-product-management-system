@@ -623,7 +623,7 @@ export async function shipOrders() {
       }
 
       console.log(
-        `Order ID: ${selectedOrder._id} has been marked as Shipped and stock quantities updated.`
+        `Order ID: ${selectedOrder._id} has been marked as Shipped and stock quantities updated: `
       );
     } else if (action === "back") {
       console.log("Going back to the previous menu...");
@@ -632,20 +632,8 @@ export async function shipOrders() {
     }
   } catch (error) {
     console.error("An error occurred:", error);
-  } // This closing bracket was missing, causing the error
-
-  // This section was outside due to the missing bracket
-  const response = p(
-    "Has the product been shipped? (Type 'yes' for Yes, any other answer for No): "
-  );
-
-  if (response.toLowerCase() === "ja") {
-    // Note: You're checking for "ja" here. Did you mean "yes"?
-    console.log("The product has been shipped.");
-  } else {
-    console.log("The product has not been shipped.");
   }
-  await returnToMenu();
+  returnToMenu();
 }
 
 // Function to add new supplier
@@ -682,6 +670,7 @@ export async function viewAllSuppliers() {
       `Name: ${supplier.name}, \nContact: ${supplier.contact.name}, \nEmail: ${supplier.contact.email} \n`
     );
   });
+  await returnToMenu();
 }
 // Function to view all sales
 export async function viewAllSales() {
@@ -708,9 +697,11 @@ export async function viewAllSales() {
   } catch (error) {
     console.error("An error occurred while viewing all sales:", error);
   }
+  returnToMenu();
 }
 
 export async function viewSumOfProfits() {
+  console.log("--------------View sum of all profits---------------");
   console.log("View sum of all profits");
   console.log("Type 1 to view the sum of all profits");
   console.log("Type 2 to view the sum of profits for a specific product");
@@ -782,13 +773,13 @@ export async function viewSumOfProfits() {
       }
       break;
   }
+  returnToMenu();
 }
 
 //Function to exit application in each other funtion
 export async function returnToMenu() {
-
+  console.log("---------------------------------------------");
   let choice = p("Press ENTER  to go back to main menu: ");
-
 
   if (choice.toLowerCase() === "m") {
     main();
