@@ -11,7 +11,7 @@ import {
 const p = promptSync();
 
 export async function addNewCategory() {
-  console.log("Add new category");
+  console.log("--------------Add new category---------------");
   let name = p("Enter category name: ");
   let categoryDescription = p("Enter category description: ");
 
@@ -29,7 +29,7 @@ export async function addNewCategory() {
 
 // Function to add new product
 export async function addNewProduct() {
-  console.log("Add new product \n");
+  console.log("--------------Add a new product---------------");
 
   try {
     const categories = await CategoriesModel.find();
@@ -265,7 +265,7 @@ export async function addNewProduct() {
 
 // Function to view products by category
 export async function viewProductsByCategory() {
-  console.log("You have chosen to view products based on Category.");
+  console.log("--------------View product by categoy---------------");
 
   try {
     const categories = await CategoriesModel.find();
@@ -298,6 +298,8 @@ export async function viewProductsByCategory() {
 
 // Function to view products by supplier
 export async function viewProductsBySupplier() {
+  console.log("--------------View products by supplier---------------");
+
   try {
     const suppliers = await SuppliersModel.find();
     if (suppliers.length === 0) {
@@ -343,7 +345,9 @@ export async function viewProductsBySupplier() {
 
 // Function to view all orders in a specific price range
 export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
-  console.log("View all orders within a price range");
+  console.log(
+    "--------------View all orders within a price range---------------"
+  );
 
   const orders = await OffersModel.find({
     price: {
@@ -365,6 +369,7 @@ export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
 
 // Function to view offers from category
 export async function offersFromCategory() {
+  console.log("--------------View offers from category---------------");
   console.log("You have chosen to view offers based on Category.");
 
   try {
@@ -410,6 +415,7 @@ export async function offersFromCategory() {
 
 // Function to view the number of orders based on the number of its products in stock
 export async function viewordersBasedOnStock() {
+  console.log("--------------View orders based on stock---------------");
   try {
     const offers = await OffersModel.find();
     let offersDetails = await Promise.all(
@@ -464,6 +470,7 @@ export async function viewordersBasedOnStock() {
 }
 
 export async function createOrderForProducts() {
+  console.log("--------------Create order for products---------------");
   console.log("Create order for products");
   const productName = p("Enter the product name: ");
   const quantity = parseInt(p("Enter the quantity: "), 10);
@@ -583,6 +590,7 @@ export async function createOrderForOffers() {
 
 // Function to ship orders
 export async function shipOrders() {
+  console.log("--------------Ship Orders---------------");
   try {
     const orders = await OrdersModel.find({ status: { $ne: "Shipped" } });
     if (orders.length === 0) {
@@ -638,6 +646,7 @@ export async function shipOrders() {
 
 // Function to add new supplier
 export async function addNewSupplier() {
+  console.log("--------------Add new supplier---------------");
   try {
     console.log("Add new supplier");
     const name = p("Enter name of new supplier: ");
@@ -662,7 +671,8 @@ export async function addNewSupplier() {
 
 export async function viewAllSuppliers() {
   // Function to view all suppliers
-  console.log("View all suppliers");
+  console.log("--------------View all suppliers---------------");
+
   const suppliers = await SuppliersModel.find();
   console.log("All suppliers: \n");
   suppliers.forEach((supplier) => {
@@ -674,6 +684,7 @@ export async function viewAllSuppliers() {
 }
 // Function to view all sales
 export async function viewAllSales() {
+  console.log("--------------View all sales---------------");
   try {
     const salesOrders = await OrdersModel.find();
     if (salesOrders.length === 0) {
