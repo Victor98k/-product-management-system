@@ -15,6 +15,7 @@ import {
   viewAllSuppliers,
   viewAllSales,
   viewSumOfProfits,
+  returnToMenu,
 } from "./functions.js";
 const p = PromptSync();
 import {
@@ -53,8 +54,8 @@ const main = async () => {
 
   while (runApp) {
     // Start Menu
-
-    console.log("-------------- Main Menu ---------------");
+    console.clear();
+    console.log("--------------Main Menu---------------");
     console.log("1. Add new category");
     console.log("2. Add new product");
     console.log("3. View products by category");
@@ -82,6 +83,7 @@ const main = async () => {
       case "1":
         console.clear();
         await addNewCategory();
+
         break;
 
       case "2":
@@ -103,6 +105,7 @@ const main = async () => {
         let lowerLimit = p("Enter the lower limit of the price range:");
         let upperLimit = p("Enter the upper limit of the price range:");
         await viewAllOffersInPriceRange(lowerLimit, upperLimit);
+        await returnToMenu();
         break;
       case "6":
         console.clear();

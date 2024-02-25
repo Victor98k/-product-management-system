@@ -24,6 +24,7 @@ export async function addNewCategory() {
 
   console.log("You have added a new category");
   console.log(newCategory);
+  await returnToMenu();
 }
 
 // Function to add new product
@@ -259,6 +260,7 @@ export async function addNewProduct() {
   } catch (error) {
     console.log("An Error occured: " + error);
   }
+  await returnToMenu();
 }
 
 // Function to view products by category
@@ -291,6 +293,7 @@ export async function viewProductsByCategory() {
   } catch (error) {
     console.error("Error viewing products by category:", error);
   }
+  await returnToMenu();
 }
 
 // Function to view products by supplier
@@ -335,6 +338,7 @@ export async function viewProductsBySupplier() {
       error
     );
   }
+  await returnToMenu();
 }
 
 // Function to view all orders in a specific price range
@@ -356,6 +360,7 @@ export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
         \nPrice: ${offer.price}, \nActive: ${offer.active} \n`
     );
   });
+  await returnToMenu();
 }
 
 // Function to view offers from category
@@ -400,6 +405,7 @@ export async function offersFromCategory() {
   } catch (error) {
     console.error("Error viewing offers by category:", error);
   }
+  await returnToMenu();
 }
 
 // Function to view the number of orders based on the number of its products in stock
@@ -454,6 +460,7 @@ export async function viewordersBasedOnStock() {
   } catch (error) {
     console.error("An error occurred:", error);
   }
+  await returnToMenu();
 }
 
 export async function createOrderForProducts() {
@@ -499,15 +506,7 @@ export async function createOrderForProducts() {
   } catch (error) {
     console.error("Error creating order for products:", error);
   }
-  // let product = await OrdersModel.findOne({
-  //   name: { $regex: new RegExp(productName, "i") },
-  // });
-  // console.log(
-  //   `Product: ${productName},
-  //    Quantity: ${quantity},
-  //    Additional Detail: ${additionalDetail}`
-  // );
-  // Function to create order for individual products
+  await returnToMenu();
 }
 
 // // Function to create order for offers
@@ -579,6 +578,7 @@ export async function createOrderForOffers() {
   } catch (error) {
     console.error("Error creating order for offers:", error);
   }
+  await returnToMenu();
 }
 
 // Function to ship orders
@@ -645,6 +645,7 @@ export async function shipOrders() {
   } else {
     console.log("The product has not been shipped.");
   }
+  await returnToMenu();
 }
 
 // Function to add new supplier
@@ -668,6 +669,7 @@ export async function addNewSupplier() {
   } catch (error) {
     console.error("Error adding new supplier:", error);
   }
+  await returnToMenu();
 }
 
 export async function viewAllSuppliers() {
@@ -784,9 +786,10 @@ export async function viewSumOfProfits() {
 
 //Function to exit application in each other funtion
 export async function returnToMenu() {
-  let choice = p(
-    "Press M to return to the main menu or any other key to exit: "
-  );
+
+  let choice = p("Press ENTER  to go back to main menu: ");
+
+
   if (choice.toLowerCase() === "m") {
     main();
   }
