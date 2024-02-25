@@ -694,7 +694,7 @@ export async function viewAllSales() {
 
     salesOrders.forEach((order) => {
       console.log(
-        `Order ID: ${order._id}, Status: ${order.status}, Total Cost: ${order.total_price}`
+        `Order ID: ${order._id}, Status: ${order.status}, Total Cost: ${order.total_cost}`
       );
     }); // This is where the missing bracket was needed
 

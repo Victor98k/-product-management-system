@@ -1498,6 +1498,7 @@ export const sampleOrders = [
       },
     ],
     price: 1050, // Total price for the offer
+    total_cost: 850,
     active: true,
     status: "Pending",
     category: ["Electronics"],
@@ -1536,6 +1537,7 @@ export const sampleOrders = [
       },
     ],
     price: 880,
+    total_cost: 650,
     active: true,
     status: "Pending",
     category: ["Electronics"],
