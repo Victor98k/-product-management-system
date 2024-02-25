@@ -521,14 +521,14 @@ export async function createOrderForOffers() {
   try {
     // Fetch all active offers
     const activeOffers = await OffersModel.find({ active: true }).select(
-      "offer products offerProducts price -_id"
+      "offer products offerProducts price cost -_id"
     );
     console.log("Available Offers:");
     activeOffers.forEach((offer, index) => {
       console.log(
         `${index + 1}. ${offer.offer}:\n   Products: ${offer.products.join(
           ", "
-        )},\n   Price: $${offer.price} \n`
+        )},\n   Price: $${offer.price} \n   Cost: $${offer.cost} \n`
       );
     });
 
@@ -563,18 +563,22 @@ export async function createOrderForOffers() {
       console.log("\nA 10% discount has been applied to your order.");
     }
 
+    let totalCost = selectedOffer.cost * quantity;
+
     // Create a new order
     const newOrder = new OrdersModel({
       offer: {
         offer: selectedOffer.offer,
         products: selectedOffer.products,
         price: selectedOffer.price,
+        cost: selectedOffer.cost,
         active: selectedOffer.active,
         category: selectedOffer.category,
       },
       quantity: quantity,
       status: "pending", // Assuming 'pending' is a valid status
       total_price: totalPrice,
+      total_cost: totalCost,
     });
 
     await newOrder.save();

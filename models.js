@@ -22,6 +22,7 @@ const OffersSchema = mongoose.Schema({
   products: { type: [String] },
   offerProducts: [ProductsSchema], // Embedding an array of ProductsSchema
   price: { type: Number },
+  cost: { type: Number },
   active: { type: Boolean },
   category: { type: [String] },
 });
