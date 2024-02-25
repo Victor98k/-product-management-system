@@ -105,7 +105,7 @@ const main = async () => {
         let lowerLimit = p("Enter the lower limit of the price range:");
         let upperLimit = p("Enter the upper limit of the price range:");
         await viewAllOffersInPriceRange(lowerLimit, upperLimit);
-        await returnToMenu();
+
         break;
       case "6":
         console.clear();
