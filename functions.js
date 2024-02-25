@@ -11,7 +11,7 @@ import {
 const p = promptSync();
 
 export async function addNewCategory() {
-  console.log("--------------Add new category---------------");
+  console.log("Add new category");
   let name = p("Enter category name: ");
   let categoryDescription = p("Enter category description: ");
 
@@ -24,248 +24,33 @@ export async function addNewCategory() {
 
   console.log("You have added a new category");
   console.log(newCategory);
-  await returnToMenu();
 }
 
 // Function to add new product
 export async function addNewProduct() {
-  console.log("--------------Add a new product---------------");
+  console.log("Add new product");
 
-  try {
-    const categories = await CategoriesModel.find();
-    console.log("Current available categories:\n ");
-    categories.forEach((category, index) => {
-      console.log(`${index + 1}. ${category.name}`);
-    });
+  let Namee = p("Enter name of product: ");
+  let Category = p("Enter Category: ");
+  let Price = p("Enter Price: ");
+  let Cost = p("Enter Cost: ");
+  let Stock = p("Enter Stock: ");
 
-    console.log(
-      "\nChoose an option for adding the new product, by entering corresponding number:"
-    );
-    console.log("1. Add the new product into existing category.");
-    console.log("2. Add a new category");
-    console.log("");
-    let choice = p("Enter your choice: ");
-
-    switch (choice) {
-      case "1":
-        try {
-          console.log("\n----------------");
-          console.log(
-            "\nYou have chosen to add a new product into an existing category."
-          );
-
-          console.log(
-            "Choose category by entering the number from the current available categories above\n"
-          );
-
-          let categoryChoice = parseInt(p("Enter category number: "));
-          let selectedCategory = categories[categoryChoice - 1];
-
-          let newCategory = selectedCategory.name;
-
-          let newName = p("Enter name of new product: ");
-          let newPrice = p("Enter the price: ");
-          let newCost = p("Enter the cost: ");
-          let newStock = p("Enter the stock: ");
-
-          const currentSuppliers = await SuppliersModel.find();
-          console.log("\nCurrent available suppliers:\n");
-          currentSuppliers.forEach((supplier, index) => {
-            console.log(`${index + 1}. ${supplier.name}`);
-          });
-
-          console.log(
-            "\nChoose an option for adding the new product, by entering corresponding number:"
-          );
-          console.log("1. Add the new product from existing supplier.");
-          console.log("2. Add a new supplier");
-          let choiceSupplier = p("Enter your choice: ");
-
-          switch (choiceSupplier) {
-            case "1":
-              console.log("\n----------------");
-              console.log(
-                "\nYou have chosen to add product from an existing supplier."
-              );
-
-              console.log(
-                "Choose a supplier by entering the number from the current suppliers above\n"
-              );
-
-              let supplierChoice = parseInt(p("Enter supplier number: "));
-              let selectedSupplier = currentSuppliers[supplierChoice - 1];
-
-              let newSupplier = {
-                name: selectedSupplier.name,
-                contact: selectedSupplier.contact,
-              };
-
-              let newProduct = {
-                name: newName,
-                category: newCategory,
-                price: newPrice,
-                cost: newCost,
-                stock: newStock,
-                supplier: newSupplier,
-              };
-
-              await ProductsModel.create(newProduct);
-              console.log("You have added a new product");
-              console.log(newProduct);
-              break;
-            case "2":
-              try {
-                console.log("\nYou have chosen to add a new supplier");
-                const name = p("Enter name of new supplier: ");
-                const contactName = p("Enter new contact name: ");
-                const contactEmail = p("Enter new supplier email: ");
-
-                const newSupplier = new SuppliersModel({
-                  name: name,
-                  contact: {
-                    name: contactName,
-                    email: contactEmail,
-                  },
-                });
-
-                await newSupplier.save();
-                console.log(` \n Supplier "${name}" was added!`);
-
-                let newProduct = {
-                  name: newName,
-                  category: newCategory,
-                  price: newPrice,
-                  cost: newCost,
-                  stock: newStock,
-                  supplier: newSupplier,
-                };
-
-                await ProductsModel.create(newProduct);
-                console.log("You have added a new product");
-                console.log(newProduct);
-              } catch (error) {
-                console.log("\n An error occured! " + error);
-              }
-              break;
-          }
-        } catch (error) {
-          console.log("An Error occured: " + error);
-        }
-        break;
-      case "2":
-        console.log("You have chosen to add a new category.");
-        let newCategoryName = p("Enter category name: "); // Changed variable name for clarity
-        let newCategoryDescription = p("Enter category description: ");
-
-        let newCategory = {
-          name: newCategoryName, // Adjusted to match schema
-          categoryDescription: newCategoryDescription,
-        };
-
-        await CategoriesModel.create(newCategory);
-
-        console.log("You have added a new category");
-        console.log(newCategory);
-
-        let newName = p("Enter name of new product: ");
-        let newPrice = p("Enter the price: ");
-        let newCost = p("Enter the cost: ");
-        let newStock = p("Enter the stock: ");
-
-        const currentSuppliers = await SuppliersModel.find();
-        console.log("Current available suppliers:\n");
-        currentSuppliers.forEach((supplier, index) => {
-          console.log(`${index + 1}. ${supplier.name}`);
-        });
-
-        console.log(
-          "\nChoose an option for adding the new product, by entering corresponding number:"
-        );
-        console.log("1. Add the new product from existing supplier.");
-        console.log("2. Add a new supplier");
-        let choiceSupplier = p("Enter your choice: ");
-
-        switch (choiceSupplier) {
-          case "1":
-            console.log("\n==============");
-            console.log(
-              "You have chosen to add product from an existing supplier."
-            );
-
-            let choice = parseInt(
-              p(
-                "Choose a supplier by entering the number from the current suppliers above: "
-              )
-            );
-            let selectedSupplier = currentSuppliers[choice - 1];
-
-            let newSupplier = {
-              name: selectedSupplier.name,
-              contact: selectedSupplier.contact,
-            };
-
-            let newProduct = {
-              name: newName,
-              category: newCategoryName,
-              price: newPrice,
-              cost: newCost,
-              stock: newStock,
-              supplier: newSupplier,
-            };
-
-            await ProductsModel.create(newProduct);
-            console.log("You have added a new product");
-            console.log(newProduct);
-            break;
-          case "2":
-            try {
-              console.log("\nYou have chosen to add a new supplier");
-              const name = p("Enter name of new supplier: ");
-              const contactName = p("Enter new contact name: ");
-              const contactEmail = p("Enter new supplier email: ");
-
-              const newSupplier = new SuppliersModel({
-                name: name,
-                contact: {
-                  name: contactName,
-                  email: contactEmail,
-                },
-              });
-
-              await newSupplier.save();
-              console.log(` \n Supplier "${name}" was added!`);
-
-              let newProduct = {
-                name: newName,
-                category: newCategoryName,
-                price: newPrice,
-                cost: newCost,
-                stock: newStock,
-                supplier: {
-                  name: newSupplier.name,
-                  contact: newSupplier.contact,
-                },
-              };
-
-              await ProductsModel.create(newProduct);
-              console.log("You have added a new product");
-              console.log(newProduct);
-            } catch (error) {
-              console.log("\n An error occured! " + error);
-            }
-            break;
-        }
-        break;
-    }
-  } catch (error) {
-    console.log("An Error occured: " + error);
-  }
-  await returnToMenu();
+  let newProduct = {
+    name: Namee,
+    category: Category,
+    price: Price,
+    cost: Cost,
+    stock: Stock,
+  };
+  await ProductsModel.create(newProduct);
+  console.log("You have added a new product");
+  console.log(newProduct);
 }
 
 // Function to view products by category
 export async function viewProductsByCategory() {
-  console.log("--------------View product by categoy---------------");
+  console.log("You have chosen to view products based on Category.");
 
   try {
     const categories = await CategoriesModel.find();
@@ -293,13 +78,10 @@ export async function viewProductsByCategory() {
   } catch (error) {
     console.error("Error viewing products by category:", error);
   }
-  await returnToMenu();
 }
 
 // Function to view products by supplier
 export async function viewProductsBySupplier() {
-  console.log("--------------View products by supplier---------------");
-
   try {
     const suppliers = await SuppliersModel.find();
     if (suppliers.length === 0) {
@@ -311,8 +93,7 @@ export async function viewProductsBySupplier() {
       console.log(`${index + 1}: Supplier Name: ${supplier.name}`);
     });
 
-    const supplierIndex =
-      parseInt(p("Choose a supplier by entering its number: ")) - 1;
+    const supplierIndex = parseInt(p("Choose a supplier by entering its number: ")) - 1;
     const selectedSupplier = suppliers[supplierIndex];
 
     if (!selectedSupplier) {
@@ -320,9 +101,7 @@ export async function viewProductsBySupplier() {
       return;
     }
 
-    const products = await ProductsModel.find({
-      "supplier.name": selectedSupplier.name,
-    });
+    const products = await ProductsModel.find({ 'supplier.name': selectedSupplier.name });
     if (products.length === 0) {
       console.log(`No products found for supplier: ${selectedSupplier.name}`);
       return;
@@ -330,26 +109,18 @@ export async function viewProductsBySupplier() {
 
     console.log(`Products provided by ${selectedSupplier.name}:`);
     products.forEach((product) => {
-      console.log(
-        `Name: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`
-      );
+      console.log(`Name: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`);
     });
   } catch (error) {
-    console.error(
-      "An error occurred while viewing products by supplier:",
-      error
-    );
+    console.error("An error occurred while viewing products by supplier:", error);
   }
-  await returnToMenu();
 }
 
 // Function to view all orders in a specific price range
 export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
-  console.log(
-    "--------------View all orders within a price range---------------"
-  );
+  console.log("View all orders within a price range");
 
-  const orders = await OffersModel.find({
+  const orders = await ordersModel.find({
     price: {
       $gte: lowerLimit,
       $lte: upperLimit,
@@ -360,22 +131,20 @@ export async function viewAllOffersInPriceRange(lowerLimit, upperLimit) {
   );
   orders.forEach((offer) => {
     console.log(
-      ` \nProducts: ${offer.products.join(", ")},  
-        \nPrice: ${offer.price}, \nActive: ${offer.active} \n`
+      ` Products: ${offer.products.join(", ")},  
+        Price: ${offer.price}, Active: ${offer.active}`
     );
   });
-  await returnToMenu();
 }
 
 // Function to view offers from category
 export async function offersFromCategory() {
-  console.log("--------------View offers from category---------------");
   console.log("You have chosen to view offers based on Category.");
 
   try {
     const categories = await CategoriesModel.find();
     console.log(
-      "You can choose to view offers out of following categories:\n "
+      "You can choose to view products out of following categories:\n "
     );
     categories.forEach((category, index) => {
       console.log(`${index + 1}. ${category.name}`);
@@ -402,46 +171,71 @@ export async function offersFromCategory() {
     );
     offers.forEach((offer, index) => {
       console.log(
-        `${index + 1}. Products: ${offer.products.join(", ")} \n - Price: $${
-          offer.price
-        }, Active: ${offer.active ? "Yes" : "No"} \n`
+        `${index + 1}. \n - Products: ${offer.products.join(
+          ", "
+        )} \n - Price: $${offer.price}, Active: ${offer.active ? "Yes" : "No"}`
       );
     });
   } catch (error) {
     console.error("Error viewing offers by category:", error);
   }
-  await returnToMenu();
 }
+
+// export async function offersFromCategory() {
+//   console.log("You have chosen to view offers based on Category.");
+
+//   try {
+//     const categories = await CategoriesModel.find();
+//     console.log(
+//       "You can choose to view products out of following categories:\n "
+//     );
+//     categories.forEach((category, index) => {
+//       console.log(`${index + 1}. ${category.name}`);
+//     });
+//     console.log("\n");
+//     const choice = parseInt(p("Choose category by entering the number: "));
+//     const selectedCategory = categories[choice - 1];
+
+//     const offers = await OffersModel.find({
+//       category: selectedCategory.name,
+//     });
+//     console.log(`\nProducts in category "${selectedCategory.name}":\n`);
+//     offers.forEach((offer, index) => {
+//       console.log(
+//         `${index + 1}. ${offer.products} - Price: $${offer.price}, Active: ${
+//           offer.active
+//         }`
+//       );
+//     });
+//   } catch (error) {
+//     console.error("Error viewing offers by category:", error);
+//   }
+// }
+
+
+
 
 // Function to view the number of orders based on the number of its products in stock
 export async function viewordersBasedOnStock() {
-  console.log("--------------View orders based on stock---------------");
   try {
     const offers = await OffersModel.find();
-    let offersDetails = await Promise.all(
-      offers.map(async (offer) => {
-        let totalStock = 0;
-        let productsDetails = [];
-        for (const productName of offer.products) {
-          const product = await ProductsModel.findOne({ name: productName });
-          if (product) {
-            totalStock += product.stock;
-            productsDetails.push({
-              name: product.name,
-              price: product.price,
-              cost: product.cost,
-              stock: product.stock,
-            });
-          }
+    let offersDetails = await Promise.all(offers.map(async (offer) => {
+      let totalStock = 0;
+      let productsDetails = [];
+      for (const productName of offer.products) {
+        const product = await ProductsModel.findOne({ name: productName });
+        if (product) {
+          totalStock += product.stock;
+          productsDetails.push({ name: product.name, price: product.price, cost: product.cost, stock: product.stock });
         }
-        return {
-          offerName: offer.offerName,
-          totalStock: offer.active ? totalStock : undefined,
-          products: productsDetails,
-          active: offer.active,
-        };
-      })
-    );
+      }
+      return {
+        offerName: offer.offerName, 
+        totalStock: offer.active ? totalStock : undefined, 
+        products: productsDetails,
+        active: offer.active
+      };
+    }));
 
     offersDetails.sort((a, b) => {
       if (!a.active) return 1;
@@ -450,27 +244,19 @@ export async function viewordersBasedOnStock() {
     });
 
     offersDetails.forEach((offer, index) => {
-      console.log(
-        `${index + 1}. Offer: ${
-          offer.offerName || "No name available"
-        }, Total in Stock: ${offer.active ? offer.totalStock : "Inactive"}`
-      );
-      if (offer.active) {
-        offer.products.forEach((product) => {
-          console.log(
-            `  Product: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`
-          );
+      console.log(`${index + 1}. Offer: ${offer.offerName || 'No name available'}, Total in Stock: ${offer.active ? offer.totalStock : 'Inactive'}`);
+      if (offer.active) { 
+        offer.products.forEach(product => {
+          console.log(`  Product: ${product.name}, Price: ${product.price}, Cost: ${product.cost}, Stock: ${product.stock}`);
         });
       }
     });
   } catch (error) {
     console.error("An error occurred:", error);
   }
-  await returnToMenu();
 }
 
 export async function createOrderForProducts() {
-  console.log("--------------Create order for products---------------");
   console.log("Create order for products");
   const productName = p("Enter the product name: ");
   const quantity = parseInt(p("Enter the quantity: "), 10);
@@ -513,99 +299,78 @@ export async function createOrderForProducts() {
   } catch (error) {
     console.error("Error creating order for products:", error);
   }
-  await returnToMenu();
+  // let product = await OrdersModel.findOne({
+  //   name: { $regex: new RegExp(productName, "i") },
+  // });
+  // console.log(
+  //   `Product: ${productName},
+  //    Quantity: ${quantity},
+  //    Additional Detail: ${additionalDetail}`
+  // );
+  // Function to create order for individual products
 }
 
 // // Function to create order for offers
 export async function createOrderForOffers() {
   try {
-    // Fetch all active offers
-    const activeOffers = await OffersModel.find({ active: true }).select(
-      "offer products offerProducts price -_id"
-    );
-    console.log("Available Offers:");
-    activeOffers.forEach((offer, index) => {
+    const offers = await OffersModel.find({ active: true });
+    console.log("Available Offers: \n");
+    offers.forEach((offer, index) => {
       console.log(
-        `${index + 1}. ${offer.offer}:\n   Products: ${offer.products.join(
-          ", "
-        )},\n   Price: $${offer.price} \n`
+        `${index + 1}. Offer: \n - Products: ${offer.products} \n - Price: $${
+          offer.price
+        } \n`
       );
     });
 
-    // User selects an offer
-    let offerIndex =
-      parseInt(
-        p("Enter the index(!) of the offer you want to place an order for: ")
-      ) - 1;
-    if (offerIndex < 0 || offerIndex >= activeOffers.length) {
-      console.log("Invalid selection.");
+    const selectedIndex =
+      parseInt(p("Enter the index of the offer to include in the order: ")) - 1;
+
+    if (
+      isNaN(selectedIndex) ||
+      selectedIndex < 0 ||
+      selectedIndex >= offers.length
+    ) {
+      console.log("Invalid offer index.");
       return;
     }
-    let selectedOffer = activeOffers[offerIndex];
 
-    //console.log(selectedOffer);
+    const selectedOffer = offers[selectedIndex];
 
-    // User specifies the quantity
-    let quantity = parseInt(
-      p("Enter the quantity of the offer you want to order: ")
+    const quantity = parseInt(
+      p(`Enter the quantity of Offer ${selectedOffer.offer} to order: `)
     );
     if (isNaN(quantity) || quantity <= 0) {
-      console.log("Invalid quantity.");
+      console.log(`Invalid quantity for Offer ${selectedOffer.offer}.`);
       return;
     }
 
-    // Calculate total price based on selected offer and quantity
-    let totalPrice = selectedOffer.price * quantity;
-
-    // Apply discount if quantity is more than 10
-    if (quantity > 10) {
-      totalPrice *= 0.9; // apply 10% discount
-      console.log("\nA 10% discount has been applied to your order.");
-    }
-
-    // Create a new order
     const newOrder = new OrdersModel({
-      offer: {
-        offer: selectedOffer.offer,
-        products: selectedOffer.products,
-        price: selectedOffer.price,
-        active: selectedOffer.active,
-        category: selectedOffer.category,
-      },
-      quantity: quantity,
-      status: "pending", // Assuming 'pending' is a valid status
-      total_price: totalPrice,
+      offer: selectedOffer.offer,
+      quantity,
+      status: "pending",
     });
-
     await newOrder.save();
-    console.log("\nOrder placed successfully.");
-    console.log(
-      `\nNew order placed: \n  ${selectedOffer.offer} \n   Quantity: ${newOrder.quantity} \n   Total price of order: $${newOrder.total_price}`
-    );
+
+    console.log(`Order created successfully for Offer ${selectedOffer.offer}.`);
   } catch (error) {
     console.error("Error creating order for offers:", error);
   }
-  await returnToMenu();
 }
-
 // Function to ship orders
 export async function shipOrders() {
-  console.log("--------------Ship Orders---------------");
   try {
-    const orders = await OrdersModel.find({ status: { $ne: "Shipped" } });
+    const orders = await OrdersModel.find({ status: { $ne: 'Shipped' } });
     if (orders.length === 0) {
       console.log("There are no orders to display.");
       return;
     }
 
     orders.forEach((order, index) => {
-      console.log(
-        `${index + 1}: Order ID: ${order._id}, Status: ${order.status}`
-      );
+      console.log(`${index + 1}: Order ID: ${order._id}, Status: ${order.status}`);
     });
 
-    const orderIndex =
-      parseInt(p("Choose an order by entering its number: ")) - 1;
+    const orderIndex = parseInt(p("Choose an order by entering its number: ")) - 1;
     const selectedOrder = orders[orderIndex];
 
     if (!selectedOrder) {
@@ -613,27 +378,17 @@ export async function shipOrders() {
       return;
     }
 
-    const action = p(
-      "Enter 'ship' to ship the order, or 'back' to go back: "
-    ).toLowerCase();
+    const action = p("Enter 'ship' to ship the order, or 'back' to go back: ").toLowerCase();
 
-    if (action === "ship") {
-      await OrdersModel.updateOne(
-        { _id: selectedOrder._id },
-        { $set: { status: "Shipped" } }
-      );
+    if (action === 'ship') {
+      await OrdersModel.updateOne({ _id: selectedOrder._id }, { $set: { status: 'Shipped' } });
 
       if (selectedOrder.product && selectedOrder.quantity) {
-        await ProductsModel.updateOne(
-          { _id: selectedOrder.product },
-          { $inc: { stock: -selectedOrder.quantity } }
-        );
+        await ProductsModel.updateOne({ _id: selectedOrder.product }, { $inc: { stock: -selectedOrder.quantity } });
       }
 
-      console.log(
-        `Order ID: ${selectedOrder._id} has been marked as Shipped and stock quantities updated: `
-      );
-    } else if (action === "back") {
+      console.log(`Order ID: ${selectedOrder._id} has been marked as Shipped and stock quantities updated.`);
+    } else if (action === 'back') {
       console.log("Going back to the previous menu...");
     } else {
       console.log("Invalid action.");
@@ -641,12 +396,10 @@ export async function shipOrders() {
   } catch (error) {
     console.error("An error occurred:", error);
   }
-  returnToMenu();
 }
 
 // Function to add new supplier
 export async function addNewSupplier() {
-  console.log("--------------Add new supplier---------------");
   try {
     console.log("Add new supplier");
     const name = p("Enter name of new supplier: ");
@@ -666,25 +419,22 @@ export async function addNewSupplier() {
   } catch (error) {
     console.error("Error adding new supplier:", error);
   }
-  await returnToMenu();
 }
 
 export async function viewAllSuppliers() {
   // Function to view all suppliers
-  console.log("--------------View all suppliers---------------");
-
+  console.log("View all suppliers");
   const suppliers = await SuppliersModel.find();
-  console.log("All suppliers: \n");
+  console.log("All suppliers");
   suppliers.forEach((supplier) => {
     console.log(
-      `Name: ${supplier.name}, \nContact: ${supplier.contact.name}, \nEmail: ${supplier.contact.email} \n`
+      `Name: ${supplier.name}, 
+      Contact: ${supplier.contact.name}`
     );
   });
-  await returnToMenu();
 }
 // Function to view all sales
 export async function viewAllSales() {
-  console.log("--------------View all sales---------------");
   try {
     const salesOrders = await OrdersModel.find();
     if (salesOrders.length === 0) {
@@ -693,14 +443,12 @@ export async function viewAllSales() {
     }
 
     salesOrders.forEach((order) => {
-      console.log(
-        `Order ID: ${order._id}, Status: ${order.status}, Total Cost: ${order.total_cost}`
-      );
-    }); // This is where the missing bracket was needed
+      console.log(`Order ID: ${order._id}, Status: ${order.status}, Total Cost: ${order.total_cost}`);
+    });
 
     console.log("Enter 'back' to return to the main menu.");
     const action = p("Your choice: ").toLowerCase();
-    if (action === "back") {
+    if (action === 'back') {
       console.log("Returning to the main menu...");
     } else {
       console.log("Invalid action. Returning to the main menu...");
@@ -708,91 +456,46 @@ export async function viewAllSales() {
   } catch (error) {
     console.error("An error occurred while viewing all sales:", error);
   }
-  returnToMenu();
 }
 
 export async function viewSumOfProfits() {
-  console.log("--------------View sum of all profits---------------");
+  // Function to view the sum of all profits
   console.log("View sum of all profits");
-  console.log("Type 1 to view the sum of all profits");
-  console.log("Type 2 to view the sum of profits for a specific product");
 
-  let choice = p("Make a choice by entering a number: ");
-  let taxRate = 0.2;
+  let choice = p(
+    "Enter 'all' to view all orders\nor 'product' to view orders for a specific product: "
+  );
 
-  switch (choice) {
-    case "1":
-      console.clear();
-      console.log("Sum of all profits");
+  let orders;
+  let productName;
 
-      try {
-        let allOffers = await OffersModel.find({ active: true });
-
-        let totalProfit = 0;
-        allOffers.forEach((offer) => {
-          offer.offerProducts.forEach((product) => {
-            let profit = product.price - product.cost;
-            console.log(`Profit for ${product.name}: ${profit}`);
-            totalProfit += profit;
-          });
-        });
-
-        // KOLLA PÅ TAX SKITEN NU DRAS D AV PÅ TOTAL PROFIT
-        totalProfit = totalProfit * (1 - taxRate);
-
-        console.log(`Total Profit: ${totalProfit} kr`);
-      } catch (error) {
-        console.error("Error fetching offers:", error);
-      }
-
-      break;
-    case "2":
-      console.clear();
-      let productName = p("Enter the name of the product: ");
-      let specificOffers = await OffersModel.find({
-        "offerProducts.name": productName,
-        active: true,
-      });
-
-      if (specificOffers.length > 0) {
-        let specificProfit = 0;
-
-        specificOffers.forEach((offer) => {
-          offer.offerProducts.forEach((product) => {
-            // Check if product.quantity is a valid number, if not, set it to 1
-            let quantity = !isNaN(product.quantity) ? product.quantity : 1;
-
-            if (product.name === productName) {
-              let profit = (product.price - product.cost) * quantity;
-              console.log(
-                `Profit for ${productName} in ${offer.offer}: ${profit}`
-              );
-              specificProfit += profit;
-            }
-          });
-        });
-
-        // KOLLA TAX SKITEN NU
-        // Apply tax rate
-        specificProfit = specificProfit * (1 - taxRate);
-
-        console.log(
-          `Total Profit for ${productName} after taxes : ${specificProfit}kr`
-        );
-      } else {
-        console.log(`No offers found for product: ${productName}`);
-      }
-      break;
+  if (choice.toLowerCase() === "product") {
+    productName = p("Enter the name of the product: ");
+    orders = await OrdersModel.find({
+      products: {
+        $in: [productName],
+      },
+    });
+  } else {
+    orders = await OrdersModel.find();
   }
-  returnToMenu();
-}
 
-//Function to exit application in each other funtion
-export async function returnToMenu() {
-  console.log("---------------------------------------------");
-  let choice = p("Press ENTER  to go back to main menu: ");
+  let totalProfit = 0;
+  orders.forEach((order) => {
+    let profit = order.price;
+    if (order.products.length > 10) {
+      profit *= 0.9; // Apply 10% tax
+    } 
+    totalProfit += profit;
+  });
 
-  if (choice.toLowerCase() === "m") {
-    main();
+  if (choice.toLowerCase() === "product") {
+    console.log(
+      `Total profit from orders containing ${productName}: ${totalProfit}`
+    );
+  } else {
+    console.log(`Total profit: ${totalProfit}`);
   }
 }
+
+//Hej hej
