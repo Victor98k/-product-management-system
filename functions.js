@@ -492,12 +492,12 @@ export async function createOrderForProducts() {
 
     // Create a new SalesOrder document
     const newProductOrder = new OrdersModel({
-      product: productToOrder.toObject(), // Assuming you're embedding the whole product
+      product: productToOrder.toObject(),
       quantity: quantity,
-      status: "pending", // Providing a value for the required 'status' field
+      status: "pending",
       additional_detail: additionalDetail,
-      total_price: productToOrder.price * quantity, // Example calculation for total price
-      total_cost: productToOrder.cost * quantity, // Example calculation for total cost
+      total_price: productToOrder.price * quantity,
+      total_cost: productToOrder.cost * quantity,
     });
 
     // Save the new SalesOrder document to the database
