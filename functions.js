@@ -525,7 +525,7 @@ export async function createOrderForOffers() {
     });
 
     // User selects an offer
-    const offerIndex =
+    let offerIndex =
       parseInt(
         p("Enter the index(!) of the offer you want to place an order for: ")
       ) - 1;
@@ -533,12 +533,12 @@ export async function createOrderForOffers() {
       console.log("Invalid selection.");
       return;
     }
-    const selectedOffer = activeOffers[offerIndex];
+    let selectedOffer = activeOffers[offerIndex];
 
     //console.log(selectedOffer);
 
     // User specifies the quantity
-    const quantity = parseInt(
+    let quantity = parseInt(
       p("Enter the quantity of the offer you want to order: ")
     );
     if (isNaN(quantity) || quantity <= 0) {
@@ -547,7 +547,13 @@ export async function createOrderForOffers() {
     }
 
     // Calculate total price based on selected offer and quantity
-    const totalPrice = selectedOffer.price * quantity;
+    let totalPrice = selectedOffer.price * quantity;
+
+    // Apply discount if quantity is more than 10
+    if (quantity > 10) {
+      totalPrice *= 0.9; // apply 10% discount
+      console.log("\nA 10% discount has been applied to your order.");
+    }
 
     // Create a new order
     const newOrder = new OrdersModel({
@@ -779,7 +785,10 @@ export async function viewSumOfProfits() {
 
 //Function to exit application in each other funtion
 export async function returnToMenu() {
+
   let choice = p("Press ENTER  to go back to main menu: ");
+
+
   if (choice.toLowerCase() === "m") {
     main();
   }
