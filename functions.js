@@ -42,21 +42,22 @@ export async function addNewProduct() {
     );
     console.log("1. Add the new product into existing category.");
     console.log("2. Add a new category");
+    console.log("");
     let choice = p("Enter your choice: ");
 
     switch (choice) {
       case "1":
         try {
-          console.log("\n==============");
+          console.log("\n----------------");
           console.log(
-            "\nYou have chosen to add product into an existing category."
+            "\nYou have chosen to add a new product into an existing category."
           );
 
-          let categoryChoice = parseInt(
-            p(
-              "Choose category by entering the number from the current categories above: "
-            )
+          console.log(
+            "Choose category by entering the number from the current available categories above\n"
           );
+
+          let categoryChoice = parseInt(p("Enter category number: "));
           let selectedCategory = categories[categoryChoice - 1];
 
           let newCategory = selectedCategory.name;
@@ -67,7 +68,7 @@ export async function addNewProduct() {
           let newStock = p("Enter the stock: ");
 
           const currentSuppliers = await SuppliersModel.find();
-          console.log("Current available suppliers:\n");
+          console.log("\nCurrent available suppliers:\n");
           currentSuppliers.forEach((supplier, index) => {
             console.log(`${index + 1}. ${supplier.name}`);
           });
@@ -81,16 +82,16 @@ export async function addNewProduct() {
 
           switch (choiceSupplier) {
             case "1":
-              console.log("\n==============");
+              console.log("\n----------------");
               console.log(
-                "You have chosen to add product from an existing supplier."
+                "\nYou have chosen to add product from an existing supplier."
               );
 
-              let supplierChoice = parseInt(
-                p(
-                  "Choose a supplier by entering the number from the current suppliers above: "
-                )
+              console.log(
+                "Choose a supplier by entering the number from the current suppliers above\n"
               );
+
+              let supplierChoice = parseInt(p("Enter supplier number: "));
               let selectedSupplier = currentSuppliers[supplierChoice - 1];
 
               let newSupplier = {

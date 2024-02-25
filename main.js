@@ -48,12 +48,13 @@ const connectToDatabase = async () => {
 await connectToDatabase();
 
 const main = async () => {
+  console.clear();
   let runApp = true;
 
   while (runApp) {
     // Start Menu
 
-    console.log("--------------Main Menu---------------");
+    console.log("-------------- Main Menu ---------------");
     console.log("1. Add new category");
     console.log("2. Add new product");
     console.log("3. View products by category");
@@ -73,7 +74,7 @@ const main = async () => {
     console.log("12. View suppliers");
     console.log("13.  View all sales");
     console.log("14.  View sum of all profits");
-    console.log("15. Exit application");
+    console.log("15. Exit application\n");
 
     let choice = p("Make a choice by entering number: ");
 
